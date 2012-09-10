@@ -254,13 +254,15 @@ class Model(dict):
                 cb(ret_obj)
 
     def __repr__(self):
-        return str(self.__get_value())
+        return self.__get_value()
 
     def __str__(self):
         return str(self.__get_value())
 
     def __unicode__(self):
         return unicode(self.__get_value())
+
+
 
 
 class EmbeddedModelField(Field):
@@ -281,7 +283,10 @@ class EmbeddedModelField(Field):
         """
         Models return a dict, so we just need to call the same function
         """
-        return self.value.get_value()
+        if self.value:
+            return self.value.get_value()
+        else:
+            return None
 
     def __str__(self):
         return str(self.get_value())

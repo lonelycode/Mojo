@@ -5,7 +5,7 @@ def authenticate(userObj, password):
     Will check if a user password matches the input to authenticate the user,
     this will NOT log them in
     """
-    if bcrypt.hashpw(password, userObj.password) == userObj.password:
+    if bcrypt.hashpw(password, userObj.password.get_value()) == userObj.password.get_value():
         return True
     else:
         return False
@@ -17,7 +17,7 @@ def set_password(userObj, new_password):
     new_pw = bcrypt.hashpw(new_password, bcrypt.gensalt())
     userObj.password = new_pw
 
-    return UserObj
+    return userObj
 
 def make_random_password():
     """

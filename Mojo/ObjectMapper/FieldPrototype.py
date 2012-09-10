@@ -67,7 +67,7 @@ class Field(object):
                 return None
 
     def __repr__(self):
-        return str(self)
+        return self
 
     def __unicode__(self):
         return unicode(self.value)

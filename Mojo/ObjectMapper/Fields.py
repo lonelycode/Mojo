@@ -117,7 +117,10 @@ class ListField(Field):
         return ret_list
 
     def get_value(self):
-        return self.expand_list(self.value)
+        if self.value:
+            return self.expand_list(self.value)
+        else:
+            return None
 
 from bson.objectid import ObjectId
 class ObjectIDField(Field):

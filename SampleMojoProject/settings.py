@@ -22,6 +22,7 @@ USE_AUTH = True
 COOKIE_SECRET = '123456789123456789'
 
 INSTALLED_APPS = [
-    'SampleApp'
+    'SampleApp',
+    'Admin'
 ]
 

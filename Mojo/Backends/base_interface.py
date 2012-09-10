@@ -23,7 +23,10 @@ class CollectionModelInterface(object):
             self.collection_name = type(self.model).__name__
 
     def _return_model_object(self,dict):
-        return self.model(dict)
+        if dict:
+            return self.model(dict)
+        else:
+            return None
 
     def find(self, *args, **kwargs):
         pass
