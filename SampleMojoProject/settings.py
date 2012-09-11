@@ -11,7 +11,7 @@ PROJECT_NAME = ''
 STATIC_PATH = '/Users/buhrm/src/DynaMojoEnv/SampleMojoProject/static'
 
 DATABASE = {
-    'backend': 'Mojo.Backends.PyMongoBackend.pymongo_backend',
+    'backend': 'Mojo.Backends.AsyncmongoBackend.asyncmongo_backend',
     'is_async': False,
     'name': 'test',
     'host': '127.0.0.1',
@@ -19,6 +19,8 @@ DATABASE = {
 }
 
 USE_AUTH = True
+#TODO: make login/logout request handlers generic for easy implementation and import as part of Auth
+LOGIN_URL = '/admin/login/'
 COOKIE_SECRET = '123456789123456789'
 
 INSTALLED_APPS = [

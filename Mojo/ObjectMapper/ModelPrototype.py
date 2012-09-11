@@ -41,6 +41,10 @@ class Model(dict):
         else:
             raise KeyError('No such key in model')
 
+    def __len__(self):
+        #Enables us to be 'falsy'
+        return len(self.__get_value())
+
     __getitem__ = __getattr__
     __setitem__ = __setattr__
 
@@ -254,7 +258,8 @@ class Model(dict):
                 cb(ret_obj)
 
     def __repr__(self):
-        return self.__get_value()
+        ret_str = "%s" % str(type(self.__get_value()))
+        return str(ret_str)
 
     def __str__(self):
         return str(self.__get_value())

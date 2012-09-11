@@ -7,43 +7,38 @@ class SessionManager(object):
     def __init__(self, request_handler):
         self.request_handler = request_handler
         self.session_model = None
+        self.session_id = None
+        self.cookies = self.get_session_cookies()
 
-    def get_or_create_session(self):
+    def get_session_cookies(self):
         """
         Will get a secure cookie ID from the request OR return an empty session object
         """
+
+        cookies = {}
         if self.request_handler.get_secure_cookie('session_id'):
-            return self.request_handler.get_secure_cookie('session_id'), False
-        else:
-            new_session = self._create_new_session()
-            return new_session, True
+            cookies['session_id'] = self.request_handler.get_secure_cookie('session_id')
+            self.session_id = cookies['session_id']
+
+        if self.request_handler.get_secure_cookie('logged_in'):
+            cookies['logged_in'] = self.request_handler.get_secure_cookie('logged_in')
+
+        return cookies
 
     def _logout(self):
-        if self.session_model is not None:
-            self._set_session_key('logged_in', '')
-            logging.debug("Logged out - logged_in key set to: %s", str(self._get_session_key('logged_in')))
-
-        return self.session_model
+        self.request_handler.set_secure_cookie('logged_in', '')
+        return True
 
     def _login(self, userObj):
-        if self.session_model is not None:
-            self._set_session_key('logged_in', str(userObj._id))
+        self.request_handler.set_secure_cookie('logged_in', str(userObj._id))
+        return True
 
     def _is_logged_in(self):
-        if self.session_model is not None:
-            if self._get_session_key('logged_in'):
-                return self._get_session_key('logged_in')
+        if 'logged_in' in self.get_session_cookies().keys():
+            cookies = self.get_session_cookies()
+            if cookies['logged_in'] is not None:
+                return True
             else:
-                return False
-        else:
-            return False
-
-    def _log_user_in(self, userObj):
-        if self.session_model is not None:
-            if self._is_session_valid():
-                self._set_session_key('logged_in', str(userObj._id))
-            else:
-                #TODO: These should raise errors
                 return False
         else:
             return False
@@ -58,15 +53,17 @@ class SessionManager(object):
             return False
 
     def _set_session_key(self, key, value):
-        session_data = self._decode_session(self.session_model.session_data.get_value())
-        session_data[key] = value
+        if self.session_model.session_data is not None:
+            session_data = self._decode_session(self.session_model.session_data.get_value())
+            session_data[key] = value
+        else:
+            session_data = {key:value}
+
         enc_data = self._encode_session(session_data)
         self.session_model.session_data = enc_data
 
     def _get_session_key(self, key):
-        #TODO: It's not saving session data AT ALL
         if self._is_session_valid():
-
             session_data = {}
             if self.session_model is not None:
                 session_data = self._decode_session(self.session_model.session_data.get_value())
@@ -96,7 +93,7 @@ class SessionManager(object):
 
     def _create_new_session(self):
         new_key = str(uuid4())
-        new_session = Session()._setup_session()
+        new_session = Setup_session(Session())
         self.session_model = new_session
         self.request_handler.set_secure_cookie('session_id', new_key)
         return self.session_model
@@ -105,6 +102,7 @@ def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
     sessionObj.session_key = str(uuid.uuid4())
     expiry_date = datetime.datetime.now() +datetime.timedelta(days=expiry_days, hours=expiry_hours, minutes = expiry_minutes)
     sessionObj.session_expires = expiry_date
+    sessionObj.session_data = {}
 
     return sessionObj
 

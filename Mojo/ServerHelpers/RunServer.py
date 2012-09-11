@@ -33,7 +33,8 @@ class DynaMojoTornadoApplication(tornado.web.Application):
             xheaders=PROJECT_SETTINGS.USE_XHEADERS,
             static_path = PROJECT_SETTINGS.STATIC_PATH,
             ui_modules = ui_modules,
-            cookie_secret=PROJECT_SETTINGS.COOKIE_SECRET
+            cookie_secret=PROJECT_SETTINGS.COOKIE_SECRET,
+            login_url = PROJECT_SETTINGS.LOGIN_URL
         )
 
         self.db = db_session
