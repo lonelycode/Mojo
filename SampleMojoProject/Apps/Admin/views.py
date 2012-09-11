@@ -1,18 +1,17 @@
 import tornado.web
 from tornado import gen
 from Mojo.RequestHandlers.MojoHandler import MojoRequestHandler
-from Mojo.Auth.AuthManager import authenticate
 from Mojo.Auth.models import User
 from Mojo.Auth.Mixins.MojoAuthMixin import MojoAuthMixin
-from Mojo.Auth.Mixins.SessionMixins import SessionMixin_Sync, SessionMixin_Async
-from Mojo.Auth.SessionManager import SessionManager, Setup_session, Reset_session
+from Mojo.Auth.Mixins.SessionMixins import SessionMixin_Async
+from Mojo.Auth.Helpers import login_assistant, logout_assistant
 
-import logging
+class loginHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
 
-class loginHandler(MojoRequestHandler, MojoAuthMixin):
+    def test_callback(self, value):
+        print 'THIS IS A CALLBACK', value
 
     def get(self):
-
         if self.current_user:
             self.render('login.html', error='ALREADY LOGGED IN')
         else:
@@ -26,36 +25,20 @@ class loginHandler(MojoRequestHandler, MojoAuthMixin):
 
         target = self.get_argument('next', '/admin/')
 
-        # DBFUNCTION: Let's check the user out
+        #DBFUNCTION: Let's check the user out
         thisUser = yield gen.Task(User.find_one,{'username':username})
 
-        logging.debug('Found user: %s' % thisUser)
+        if login_assistant(thisUser, password, self):
+            self.redirect(target)
 
-        if thisUser is not None:
-            # We now have a user, let's authenticate her
-            is_authenticated = authenticate(thisUser, password)
-            logging.debug('Checking is user is authenticated: %s' % str(is_authenticated))
-            if is_authenticated:
-                # Now for session mojo
-                if hasattr(self, 'session'):
-                    self.session._login(thisUser)
-                else:
-                    SessionManager(self)._login(thisUser)
-
-                self.redirect(target)
-            else:
-                self.render('login.html', error='Login failed')
         else:
             self.render('login.html', error='Login failed')
 
 
-class logoutHandler(MojoRequestHandler, MojoAuthMixin):
+class logoutHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
     def get(self):
 
-        if hasattr(self, 'session'):
-            self.session._logout()
-        else:
-            SessionManager(self)._logout()
+        logout_assistant(self)
 
         self.render('logout.html', message='Your face')
 
