@@ -8,29 +8,20 @@ from tornado import gen
 
 from Mojo.Auth.models import Session, User
 
-#TODO:
-#For login, logout functionality - use a combination of get and set session object and the auth helpers
-#Login procedure would be:
-#- Post to login URL
-#- Login handler will:
-#-- Get username, password
-#-- Lookup userObj from DB
-#-- Check pw against user object
-#-- pass / fail
-#-- get or create session
-#-- set logged in session key
-#-- save session
-#-- redirect
-
-#Logout procedure would be:
-#-- GET to logout URI
-#-- Get Session Object from DB
-#-- if not created - set logged in to false
-#-- save session
-#-- otherwise - do nothing
-#-- redirect
-
 class MojoRequestHandler(RequestHandler):
+    """
+    The ``MojoRequestHandler`` is the starting point of any request in Mojo, subclass this for every URL
+    you want to serve in Mojo.
+
+    The ``MojoRequestHandler`` has some handy properties:
+
+    - ``application``: This is a reference to the server object, and give access to project settings
+    - ``application.mojo_settings``: All variables declared in your ``settings.py`` file
+    - ``db``: the database Session object (for direct access to the DB you can get to the driver through ``db._db.<function>``)
+
+    If you are using the ``MojoAuthMixin`` or ``SessionMixin``, the request handlers expand with many more management functions to make life
+    easier for the developer.
+    """
     def __init__(self, application, request, **kwargs):
 
         #TODO: This is really hacky, must be a more elegant wy to build up the path name

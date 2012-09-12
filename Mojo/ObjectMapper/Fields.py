@@ -3,6 +3,14 @@ import logging
 
 
 class StringField(Field):
+    """
+    Unicode string field for text based storage.
+
+    **Validation methods**
+
+    - ``max_length``: Checks for the maximum length of the string, raises ValueError if not met.
+
+    """
     base_type = unicode
 
     def __init__(self, *args, **kwargs):
@@ -47,6 +55,15 @@ class StringField(Field):
             self.validate_max_length()
 
 class IntegerField(Field):
+    """
+    Stores integer (``int``) data.
+
+    **Validation methods**
+
+    - ``max_value``: maximum value of the integer
+    - ``min_value``: minimum value of the stored value
+
+    """
     base_type = int
 
     def __init__(self, *args, **kwargs):
@@ -89,9 +106,26 @@ class IntegerField(Field):
             self.validate_max()
 
 class BooleanField(Field):
+    """
+    Stores True or False data.
+
+    **Validation methods**
+
+    - *None*
+
+    """
     base_type = bool
 
 class FloatField(IntegerField):
+    """
+    Stores Float values.
+
+    **Validation methods**
+
+    - Same as ``IntegerField``
+
+    *Note:* Will coerce integers into float values.
+    """
     base_type = float
 
     def validate_type(self):
@@ -106,6 +140,15 @@ class FloatField(IntegerField):
 
 
 class ListField(Field):
+    """
+    Stores a list of objects, objects in the list MUST be of type 'Mojo.ObjectMapper.ModelPrototype.Model' as it will
+    try to expand and retrieve the relevant value from each on access.
+
+    **Validation methods**
+
+    - *None*
+
+    """
     base_type = list
 
     def expand_list(self, list):
@@ -124,6 +167,14 @@ class ListField(Field):
 
 from bson.objectid import ObjectId
 class ObjectIDField(Field):
+    """
+    ObjectId storage - required for storing data in MongoDB, base type is ``bson.objectid.ObjectId``.
+
+    **Validation methods**
+
+    - *None*
+
+    """
     base_type = ObjectId
 
     def __repr__(self):
@@ -137,4 +188,12 @@ class ObjectIDField(Field):
 
 from datetime import datetime
 class DateTimeField(Field):
+    """
+    DateTime object storage.
+
+    **Validation methods**
+
+    - *None*
+
+    """
     base_type = datetime

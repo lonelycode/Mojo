@@ -1,0 +1,5 @@
+Mojo.SocketHandlers
+===================
+
+..  automodule:: Mojo.SocketHandlers.ControlConnection
+    :members:

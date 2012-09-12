@@ -11,7 +11,13 @@ class loginHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
     def test_callback(self, value):
         print 'THIS IS A CALLBACK', value
 
+    @tornado.web.asynchronous
+    @gen.engine
     def get(self):
+
+        a = yield gen.Task(self.get_session_key,'logged_in')
+
+        print 'YIELED STSTEMENT: ', a
         if self.current_user:
             self.render('login.html', error='ALREADY LOGGED IN')
         else:

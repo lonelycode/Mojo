@@ -19,7 +19,7 @@ DATABASE = {
 }
 
 USE_AUTH = True
-#TODO: make login/logout request handlers generic for easy implementation and import as part of Auth
+
 LOGIN_URL = '/admin/login/'
 COOKIE_SECRET = '123456789123456789'
 
