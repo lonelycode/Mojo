@@ -7,6 +7,7 @@ Mojo - a framework for Tornado
 ==============================
 
 Contents:
+---------
 
 .. toctree::
     :maxdepth: 2
@@ -20,7 +21,8 @@ Contents:
     docs/socketio.rst
     docs/authentication.rst
 
-API:
+The Mojo API:
+-------------
 
 .. toctree::
     :maxdepth: 2
