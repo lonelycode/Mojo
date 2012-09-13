@@ -35,5 +35,5 @@ Mojo/Resources/Project/Apps/views.py
 Mojo/Resources/Project/Apps/templates/mojo.html
 Mojo/ServerHelpers/RunServer.py
 Mojo/ServerHelpers/__init__.py
-Mojo/SocketHandlers/ControlConnection.py
+Mojo/SocketHandlers/BaseSocketHandler.py
 Mojo/SocketHandlers/__init__.py

@@ -70,7 +70,7 @@ class SessionManager(object):
     def _is_logged_in(self):
         '''
         Checks if a user is logged in, will get the session cookies and check the ``logged_in`` value to see if it is None
-        returns ``True`` or ``False depending on the outcome.
+        returns ``True`` or ``False`` depending on the outcome.
         '''
         if 'logged_in' in self.get_session_cookies().keys():
             cookies = self.get_session_cookies()

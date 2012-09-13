@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../../index.html" />
-    <link rel="prev" title="Mojo.ServerHelpers" href="ServerHelpers.html" /> 
+    <link rel="prev" title="Mojo.RequestHandlers" href="RequestHandlers.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ServerHelpers.html" title="Mojo.ServerHelpers"
+          <a href="RequestHandlers.html" title="Mojo.RequestHandlers"
              accesskey="P">previous</a> |</li>
         <li><a href="../../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,8 +50,44 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-Mojo.SocketHandlers.ControlConnection">
-<span id="mojo-sockethandlers"></span><h1>Mojo.SocketHandlers<a class="headerlink" href="#module-Mojo.SocketHandlers.ControlConnection" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mojo-sockethandlers">
+<h1>Mojo.SocketHandlers<a class="headerlink" href="#mojo-sockethandlers" title="Permalink to this headline">¶</a></h1>
+<p>Mojo has added some simple convenience to TornadIO2 SocketConnections by adding two key dictionaries to the framework.
+These dictionaries are populated (and depopulated) as users connect to the site.</p>
+<p>The dictionaries that are made available are:</p>
+<ul class="simple">
+<li>CURRENT_SESSIONS: Keyed by the session ID of the user</li>
+<li>LOGGED_IN_SESSIONS: Keyed by the user ID of the (logged in) user (requires Mojo.Auth to be enabled).</li>
+</ul>
+<p><strong>Usage:</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Mojo.SocketHandlers.BaseSocketHandler</span> <span class="kn">import</span> <span class="n">MojoSocketHandler</span><span class="p">,</span> <span class="n">CURRENT_SESSIONS</span><span class="p">,</span> <span class="n">LOGGED_IN_SESSIONS</span>
+
+<span class="c">#Setup your socket connections here (remember to subclass MojoSocketHandler)</span>
+<span class="k">class</span> <span class="nc">SocketConnectionHandler</span><span class="p">(</span><span class="n">MojoSocketHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<span class="target" id="module-Mojo.SocketHandlers.BaseSocketHandler"></span><dl class="class">
+<dt id="Mojo.SocketHandlers.BaseSocketHandler.MojoSocketHandler">
+<em class="property">class </em><tt class="descclassname">Mojo.SocketHandlers.BaseSocketHandler.</tt><tt class="descname">MojoSocketHandler</tt><big>(</big><em>session</em>, <em>endpoint=None</em><big>)</big><a class="headerlink" href="#Mojo.SocketHandlers.BaseSocketHandler.MojoSocketHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <tt class="docutils literal"><span class="pre">MojoSocketHandler</span></tt> overrides the <tt class="docutils literal"><span class="pre">on_open</span></tt> and <tt class="docutils literal"><span class="pre">on_close</span></tt> events of the standard <tt class="docutils literal"><span class="pre">TornadIO2</span></tt> <tt class="docutils literal"><span class="pre">SocketConnection</span></tt>
+to expose some simple session data (<tt class="docutils literal"><span class="pre">self.session_id</span></tt> and <tt class="docutils literal"><span class="pre">self.logged_in</span></tt>).</p>
+<p><tt class="docutils literal"><span class="pre">MojoSocketHandler</span></tt> will store connections in a global dictionary called <tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt>, all connections are keyed
+by the user <tt class="docutils literal"><span class="pre">session_id</span></tt> (generated automatically on request).</p>
+<p>You can import <tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt> to broadcast to all users, or emit messages to specific users based on their
+<tt class="docutils literal"><span class="pre">session_id</span></tt>.</p>
+<p>If you are using the <tt class="docutils literal"><span class="pre">Mojo.Auth</span></tt> module, and the cookie <tt class="docutils literal"><span class="pre">logged_in</span></tt> is set (i.e. the user is logged in), then another
+global dictionary: <tt class="docutils literal"><span class="pre">LOGGED_IN_SESSIONS</span></tt> is populated with the connection, keyed by the <tt class="docutils literal"><span class="pre">user_id</span></tt> of the user. This makes
+common tasks much simpler to manage such as:</p>
+<ul class="simple">
+<li>Broadcasting to all connected clients</li>
+<li>Broadcasting to only logged in users</li>
+<li>Online &#8216;status&#8217; checking of logged in users - e.g. for chat.</li>
+<li>Event-based messaging, e.g. with signals</li>
+</ul>
+</dd></dl>
+
 </div>
 
 
@@ -61,8 +97,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="ServerHelpers.html"
-                        title="previous chapter">Mojo.ServerHelpers</a></p>
+  <p class="topless"><a href="RequestHandlers.html"
+                        title="previous chapter">Mojo.RequestHandlers</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/docs/api/SocketHandlers.txt"
@@ -95,7 +131,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ServerHelpers.html" title="Mojo.ServerHelpers"
+          <a href="RequestHandlers.html" title="Mojo.RequestHandlers"
              >previous</a> |</li>
         <li><a href="../../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>

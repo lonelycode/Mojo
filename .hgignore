@@ -3,3 +3,4 @@ syntax: glob
 venv
 \.idea
 *.pyc
+dist

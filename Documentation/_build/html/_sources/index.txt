@@ -31,7 +31,7 @@ The Mojo API:
     docs/api/Backends.rst
     docs/api/ObjectMapper.rst
     docs/api/RequestHandlers.rst
-
+    docs/api/SocketHandlers.rst
 
 Indices and tables
 ==================
