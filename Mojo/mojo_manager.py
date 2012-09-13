@@ -4,9 +4,6 @@ import optparse
 import os, sys
 import shutil
 
-#TODO: Remove this
-sys.path.append('/Users/buhrm/src/DynaMojoEnv/')
-
 import Mojo
 
 project_files = [

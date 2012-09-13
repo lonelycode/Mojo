@@ -5,10 +5,11 @@
 from tornado.web import RequestHandler
 import datetime, logging, os
 from tornado import gen
+from Mojo.RequestHandlers.PrettyOutputMixin import UncaughtExceptionMixin
 
 from Mojo.Auth.models import Session, User
 
-class MojoRequestHandler(RequestHandler):
+class MojoRequestHandler(RequestHandler, UncaughtExceptionMixin):
     """
     The ``MojoRequestHandler`` is the starting point of any request in Mojo, subclass this for every URL
     you want to serve in Mojo.

@@ -18,6 +18,7 @@ class loginHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
         a = yield gen.Task(self.get_session_key,'logged_in')
 
         print 'YIELED STSTEMENT: ', a
+
         if self.current_user:
             self.render('login.html', error='ALREADY LOGGED IN')
         else:
