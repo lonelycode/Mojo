@@ -28,7 +28,7 @@ class MojoRequestHandler(RequestHandler):
         thisModule = __import__(self.__module__)
         mods = self.__module__.split('.')
         thisAppName = mods[mods.index('Apps') +1]
-        template_path = '%s/Apps/%s/templates/' % (os.path.dirname(thisModule.__file__), thisAppName)
+        template_path = 'Apps/%s/templates/' % (thisAppName)
 
         self.module_template_path = template_path
         self.application = application

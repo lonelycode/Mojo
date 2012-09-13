@@ -1,5 +1,7 @@
-from tornadio2 import SocketConnection
+from Mojo.SocketHandlers.BaseSocketHandler import MojoSocketHandler, CURRENT_SESSIONS, LOGGED_IN_SESSIONS
 
-class SocketConnectionHandler():
+#Setup your socket connections here
+class SocketConnectionHandler(MojoSocketHandler):
+
     def on_message(self, msg):
         pass

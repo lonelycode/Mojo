@@ -6,7 +6,6 @@ import tornado
 import logging
 
 from tornadio2 import SocketConnection
-from Mojo.SocketHandlers.ControlConnection import ControlConnection
 
 
 DATABASE = None
@@ -17,7 +16,7 @@ log_level = {
     "INFO":logging.INFO,
     "WARNING":logging.WARNING,
     "CRITICAL":logging.CRITICAL
-    }
+}
 
 
 
@@ -49,11 +48,15 @@ def get_module_name(path):
     return pm_name
 
 def setup_socket_handler_routers(module_name, installed_apps):
-    endpoints = {'/DynaMojoControl': ControlConnection}
+    from Mojo.SocketHandlers.BaseSocketHandler import CURRENT_SESSIONS, LOGGED_IN_SESSIONS, MojoSocketHandler
+    endpoints = {} #TODO: potentially add a baked-in control connection: {'/MojoControl': ControlConnection}
 
     for appName in installed_apps:
         app_socket_handler = None
-        socket_module_string = 'from %s.Apps.%s.socket_handlers import SocketConnectionHandler as app_socket_handler' % (module_name, appName)
+        #socket_init_string = 'from Apps.%s.socket_handlers import *' % (appName)
+        #exec(socket_init_string)
+
+        socket_module_string = 'from Apps.%s.socket_handlers import SocketConnectionHandler as app_socket_handler' % (appName)
         exec(socket_module_string)
 
         if app_socket_handler:
@@ -65,10 +68,13 @@ def setup_socket_handler_routers(module_name, installed_apps):
             logging.debug("--Couldn't find any Socket Handlers for app: %s" % (appName))
 
     # This voodoo creates the SocketConnection class dynamically
-    thisSocketConnection = type(
-        'SocketConnection',
-        (object,),
-        dict(__endpoints__ = endpoints))
+    #    thisSocketConnection = type(
+    #        'MojoSocketHandler',
+    #        (object,),
+    #        dict(__endpoints__ = endpoints))
+
+    thisSocketConnection = MojoSocketHandler
+    thisSocketConnection.__endpoints__ = endpoints
 
     SocketRouter = tornadio2.TornadioRouter(thisSocketConnection)
 
@@ -83,21 +89,21 @@ def init_run_server(ProjectModule):
 
     module_name = get_module_name(os.path.dirname(ProjectModule.__file__))
 
-    project_details_import_string = 'import %s.settings as project_settings' % (module_name)
+    project_details_import_string = 'import settings as project_settings' #% (module_name)
     exec(project_details_import_string)
     logging.basicConfig(level = log_level[project_settings.LOG_LEVEL.upper()])
 
     logging.debug(  'Setting up url routers:')
     routes = []
     for appName in project_settings.INSTALLED_APPS:
-        urls_string = 'import %s.Apps.%s.urls as urls' % (module_name, appName)
+        urls_string = 'import Apps.%s.urls as urls' % (appName)
         exec(urls_string)
         routes.extend(urls.urlpatterns)
         logging.debug("--Added URL's for: %s" % (appName))
 
     for appName in project_settings.INSTALLED_APPS:
         logging.debug("--Adding UI Modules for %s" % appName)
-        ui_module_string = 'from %s.Apps.%s import ui_modules' % (module_name, appName)
+        ui_module_string = 'from Apps.%s import ui_modules' % (appName)
         exec(ui_module_string)
 
         ui_modules = ui_modules

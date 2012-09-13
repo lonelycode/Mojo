@@ -152,10 +152,9 @@ class SessionManager(object):
         '''
         Creates and sets up a new ``session_model`` ready for the request.
         '''
-        new_key = str(uuid4())
         new_session = Setup_session(Session())
         self.session_model = new_session
-        self.request_handler.set_secure_cookie('session_id', new_key)
+        self.request_handler.set_secure_cookie('session_id', new_session.session_key.get_value())
         return self.session_model
 
 def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
