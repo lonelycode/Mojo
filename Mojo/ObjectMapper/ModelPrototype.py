@@ -3,6 +3,7 @@ from tornado import gen
 from Mojo.ServerHelpers.RunServer import BACKEND_COLLECTION, DATABASE
 import copy
 
+#TODO: This is a little hacky, an coul cause problems in future.
 EXCLUSIONS = ['collection_name']
 
 class Model(dict):
