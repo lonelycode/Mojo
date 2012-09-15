@@ -13,7 +13,7 @@ STATIC_PATH = '/Users/buhrm/src/DynaMojoEnv/SampleMojoProject/static'
 DATABASE = {
     'backend': 'Mojo.Backends.AsyncmongoBackend.asyncmongo_backend',
     'is_async': False,
-    'name': 'test',
+    'name': 'mojo_blog',
     'host': '127.0.0.1',
     'port': 27017
 }

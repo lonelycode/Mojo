@@ -101,7 +101,9 @@ class Field(object):
         Returns the value stored in the field (string representations will be shown if you print the model, override
         ``__str__`` and ``__unicode__`` to change this behaviour.
         """
+
         if self.value:
+            self.validate()
             return self.value
         else:
             if self.default:

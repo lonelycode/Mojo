@@ -154,7 +154,10 @@ class ListField(Field):
     def expand_list(self, list):
         ret_list = []
         for item in list:
-            val = item.get_value()
+            if hasattr(item, 'get_value'):
+                val = item.get_value()
+            else:
+                val = item
             ret_list.append(val)
 
         return ret_list

@@ -58,7 +58,7 @@ class CollectionModelInterface(object):
 
     def _return_model_object(self,dict):
         if dict:
-            return self.model(dict)
+            return self.model.create(dict)
         else:
             return None
 

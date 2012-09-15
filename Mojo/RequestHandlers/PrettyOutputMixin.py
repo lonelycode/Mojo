@@ -25,6 +25,7 @@ import httplib
 import logging
 import os
 import Mojo
+from tornado.web import RequestHandler
 
 exception_template = os.path.dirname(Mojo.__file__) + '/Resources/MojoTemplates/exception.html'
 

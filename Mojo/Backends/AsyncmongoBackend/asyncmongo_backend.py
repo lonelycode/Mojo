@@ -1,7 +1,7 @@
 from Mojo.Backends.base_interface import CollectionModelInterface, SessionInterface
 import asyncmongo
 from tornado import gen
-import logging
+import logging, copy
 
 class Session(SessionInterface):
     def _setup_connection(self):
@@ -34,7 +34,9 @@ class Collection(CollectionModelInterface):
 
         return_cursor = yield gen.Task(self.session._db[self.collection_name].find, *args, **kwargs)
         ret_list = return_cursor[0][0]
+
         return_model_list = [self._return_model_object(i) for i in ret_list]
+
         cb(return_model_list)
 
     @gen.engine
@@ -48,7 +50,7 @@ class Collection(CollectionModelInterface):
         else:
             clean_docs = []
             for doc in documents:
-                del doc.__data__['_id']
+                del doc['_id']
                 clean_docs.append(doc.get_value())
 
             ids = yield gen.Task(self.session._db[self.collection_name].insert, clean_docs)

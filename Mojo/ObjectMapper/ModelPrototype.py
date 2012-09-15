@@ -1,6 +1,9 @@
 from Fields import *
 from tornado import gen
 from Mojo.ServerHelpers.RunServer import BACKEND_COLLECTION, DATABASE
+import copy
+
+EXCLUSIONS = ['collection_name']
 
 class Model(dict):
     """
@@ -37,8 +40,8 @@ class Model(dict):
         #Output: {'this_field':"Hello World", 'another_field':42, 'whatever_field':True}
 
     """
+
     def __init__(self, data=None):
-        super(Model, self).__init__()
 
         self.__initialise_dictionary_from_classvars()
 
@@ -52,36 +55,33 @@ class Model(dict):
         """
         return self.__get_value()
 
-    def __getattr__(self, name):
-        return self.__class__.__dict__[name].get_value()
+    def __getattr__(self, item):
+        print "Get attr called"
+        if self.has_key(item):
+            return self[item].get_value()
 
-    def __setattr__(self, name, value):
-        if name in self.__data__.keys():
-            self.__data__[name] = value
-            self.__class__.__dict__[name].value = value
+    def __setattr__(self, key, value):
+        if self.has_key(key):
+            self[key].value = value
+            self.__dict__[key].value = value
         else:
-            raise KeyError('No such key in model')
+            raise ValueError('Key does not exist in model')
 
     def __len__(self):
-        #Enables us to be 'falsy'
         return len(self.__get_value())
-
-    __getitem__ = __getattr__
-    __setitem__ = __setattr__
 
     def __initialise_dictionary_from_classvars(self):
         """
         Will intitalise the model's dictionary with the various names of the
         class variables
         """
+        import copy
 
-        cls_var_list = [i for i in self.__class__.__dict__.keys() if '__' not in i and 'collection_name' not in i]
+        class_attrs = [attr for attr in self.__class__.__dict__ if '__' not in attr]
+        for c in class_attrs:
+            self.__dict__[c] = copy.deepcopy(self.__class__.__dict__[c])
+            self[c] = copy.deepcopy(self.__class__.__dict__[c])
 
-        init_dict = dict()
-        for v in cls_var_list:
-            init_dict[v] = None
-
-        self.__dict__['__data__'] = init_dict
 
     def __instantiate_from_dict(self, data):
         """
@@ -90,15 +90,17 @@ class Model(dict):
 
         if type(data) == dict:
             for key in data.keys():
-                if key in self.__dict__['__data__'].keys():
+                if self.has_key(key):
                     val = data[key]
                     if isinstance(val, dict):
                         model_instance = self.__class__.__dict__[key].to(val)
-                        self.__dict__['__data__'][key] = model_instance
-                        self.__class__.__dict__[key].value = model_instance
+                        self[key] = model_instance
+                        self.__dict__[key].value = model_instance
                     else:
-                        self.__dict__['__data__'][key] = data[key]
-                        self.__class__.__dict__[key].value = data[key]
+                        print 'ADDING %s' % data[key]
+                        self[key].value = data[key]
+                        self.__dict__[key].value = data[key]
+
                 else:
                     logging.warning("Ignoring '%s' from input, couldn't find matching model Field entry" % (key) )
 
@@ -106,27 +108,27 @@ class Model(dict):
             raise ValueError('Input data to model must be a dictionary')
 
 
-    def __validate(self):
+    def validate(self):
         """
         Validates the entire model, is called when _get_value() is called.
         """
-        value_dict = self.__dict__['__data__']
-        for key in value_dict.keys():
-            self.__class__.__dict__[key].value = value_dict[key]
-            self.__class__.__dict__[key].validate()
+
+        for key in self.keys():
+            if key not in EXCLUSIONS:
+                self[key].validate()
 
     def __get_value(self):
         """
         Return a dictionary of all the members (if it validates)
         """
 
-        self.__validate()
+        self.validate()
 
-        value_dict = self.__dict__['__data__']
         ret_val = {}
-        for key in value_dict:
-            if self.__class__.__dict__[key].get_value():
-                ret_val[key] = self.__class__.__dict__[key].get_value()
+        for key in self.keys():
+            if key not in EXCLUSIONS:
+                if self[key].get_value():
+                    ret_val[key] = self[key].get_value()
 
         return ret_val
 
@@ -156,6 +158,7 @@ class Model(dict):
         if DATABASE:
             if BACKEND_COLLECTION:
                 this_collection = BACKEND_COLLECTION(DATABASE, klass)
+                self.validate()
                 ret_obj = this_collection.insert(to_insert)
 
                 return ret_obj
@@ -216,6 +219,7 @@ class Model(dict):
         if DATABASE:
             if BACKEND_COLLECTION:
                 this_collection = BACKEND_COLLECTION(DATABASE, self)
+                self.validate()
                 ret_obj = this_collection.save(self)
 
                 return ret_obj
@@ -243,6 +247,7 @@ class Model(dict):
         if DATABASE:
             if BACKEND_COLLECTION:
                 this_collection = BACKEND_COLLECTION(DATABASE, self)
+                self.validate()
                 ret_obj = yield gen.Task(this_collection.save, self)
 
                 callback(ret_obj)
@@ -390,6 +395,18 @@ class Model(dict):
                 ret_obj = yield gen.Task(this_collection.find_one, *args, **kwargs)
 
                 cb(ret_obj)
+
+    @classmethod
+    def create(cls, dictionary):
+
+        instance = cls()
+        for (key, value) in dictionary.items():
+            try:
+                setattr(instance, str(key), value)
+            except TypeError, e:
+                logging.warn(e)
+
+        return instance
 
     def __repr__(self):
         ret_str = "%s" % str(type(self.__get_value()))

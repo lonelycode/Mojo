@@ -22,12 +22,15 @@ Mojo/ObjectMapper/Fields.py
 Mojo/ObjectMapper/ModelPrototype.py
 Mojo/ObjectMapper/__init__.py
 Mojo/RequestHandlers/MojoHandler.py
+Mojo/RequestHandlers/PrettyOutputMixin.py
 Mojo/RequestHandlers/__init__.py
 Mojo/Resources/__init__.py
+Mojo/Resources/MojoTemplates/exception.html
 Mojo/Resources/Project/__init__.py
 Mojo/Resources/Project/runserver.py
 Mojo/Resources/Project/settings.py
 Mojo/Resources/Project/Apps/__init__.py
+Mojo/Resources/Project/Apps/models.py
 Mojo/Resources/Project/Apps/socket_handlers.py
 Mojo/Resources/Project/Apps/ui_modules.py
 Mojo/Resources/Project/Apps/urls.py
