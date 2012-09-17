@@ -27,6 +27,7 @@ setup(name='Mojo',
     requires=['Tornado',
               'tornadio2',
               'pymongo',
-              'bson'],
+              'bson',
+              'wtforms'],
 
 )

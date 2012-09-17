@@ -109,3 +109,5 @@ class TornadoLocaleWrapper(object):
 
     def ngettext(self, message, plural_message, count):
         return self.locale.translate(message, plural_message, count)
+
+#TODO: Create a model-to-form generator function, this will be the basis of an Admin app.
