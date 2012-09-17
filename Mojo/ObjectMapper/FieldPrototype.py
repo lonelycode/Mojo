@@ -57,31 +57,38 @@ class Field(object):
         - ``allow_empty``: will enable empty checking, default to True
         - ``default``: enables default value to set on ``get_value()``
         """
-        self.value = value
+        self._value = value
         self.allow_empty = allow_empty
         self.default = default
 
+
+    def _getValue( self ):
+        return self.get_value()
+    def _setValue( self, value ):
+        self._value = value
+
+    value = property( _getValue, _setValue )
 
     def validate_type(self):
         """
         Basic type validation, this is not strict - it will validate subtypes as well, override this
         if you want to add coercion to your model (see the ``StringField`` and ``FloatField`` for an example)
         """
-        if isinstance(self.value, self.base_type):
+        if isinstance(self._value, self.base_type):
             return True
         else:
             if self.allow_empty:
-                if self.value == None:
+                if self._value == None:
                     return True
 
-            raise TypeError("Value for %s must be %s (input was %s)" % (self.__class__.__name__, str(self.base_type), str(type(self.value))))
+            raise TypeError("Value for %s must be %s (input was %s)" % (self.__class__.__name__, str(self.base_type), str(type(self._value))))
 
     def validate_is_null(self):
         """
         Validates if the value is empty. Will throw ``ValueError`` if ``allow_empty`` is false.
         """
         if not self.allow_empty:
-            if not self.value:
+            if not self._value:
                 raise ValueError('Value of %s cannot be empty' % self.__class__.__name__)
             else:
                 return True
@@ -102,9 +109,9 @@ class Field(object):
         ``__str__`` and ``__unicode__`` to change this behaviour.
         """
 
-        if self.value:
+        if self._value:
             self.validate()
-            return self.value
+            return self._value
         else:
             if self.default:
                 return self.default
@@ -115,7 +122,13 @@ class Field(object):
         return self
 
     def __unicode__(self):
-        return unicode(self.value)
+        return unicode(self._value)
 
     def __str__(self):
-        return str(self.value)
+        return str(self._value)
+
+    def __len__(self):
+        if self._value:
+            return len(self._value)
+        else:
+            return 0

@@ -23,30 +23,30 @@ class StringField(Field):
 
     def validate_max_length(self):
         if self.max_length != 0:
-            if len(self.value) > self.max_length:
+            if len(self._value) > self.max_length:
                 raise ValueError('%s must be shorter than %i characters' % (self.__class__.__name__, self.max_length))
             else:
                 return True
 
     def validate_type(self):
-        if isinstance(self.value, self.base_type):
+        if isinstance(self._value, self.base_type):
             return True
 
-        elif type(self.value) == str:
-            self.value = unicode(self.value)
+        elif type(self._value) == str:
+            self._value = unicode(self._value)
             logging.warning('Coerced input value to unicode from string')
             return True
 
         else:
             if self.allow_empty:
-                if self.value == None:
+                if self._value == None:
                     return True
 
                 try:
                     logging.warning('Type does not match, coercing to unicode string anyway.')
-                    self.value = unicode(self.value)
+                    self._value = unicode(self._value)
                 except:
-                    raise TypeError("Value for %s must be %s (input was %s)" % (self.__class__.__name__, str(self.base_type), str(type(self.value))))
+                    raise TypeError("Value for %s must be %s (input was %s)" % (self.__class__.__name__, str(self.base_type), str(type(self._value))))
 
     def validate(self):
         super(StringField, self).validate()
@@ -80,7 +80,7 @@ class IntegerField(Field):
 
     def validate_max(self):
         if self.max_value:
-            if self.value > self.max_value:
+            if self._value > self.max_value:
                 raise ValueError("%s cannot be greater than %i" % (self.__class__.__name__, self.max_value))
             else:
                 return True
@@ -89,7 +89,7 @@ class IntegerField(Field):
 
     def validate_min(self):
         if self.min_value:
-            if self.value < self.min_value:
+            if self._value < self.min_value:
                 raise ValueError("%s cannot be less than %i" % (self.__class__.__name__, self.min_value))
             else:
                 return True
@@ -129,10 +129,10 @@ class FloatField(IntegerField):
     base_type = float
 
     def validate_type(self):
-        if type(self.value) == self.base_type:
+        if type(self._value) == self.base_type:
             return True
-        elif type(self.value) == int:
-            self.value = float(self.value)
+        elif type(self._value) == int:
+            self._value = float(self._value)
             logging.warning('Coerced input value to float from int')
             return True
         else:
@@ -163,8 +163,8 @@ class ListField(Field):
         return ret_list
 
     def get_value(self):
-        if self.value:
-            return self.expand_list(self.value)
+        if self._value:
+            return self.expand_list(self._value)
         else:
             return None
 
@@ -184,10 +184,10 @@ class ObjectIDField(Field):
         return self
 
     def __unicode__(self):
-        return unicode(self.value)
+        return unicode(self._value)
 
     def __str__(self):
-        return str(self.value)
+        return str(self._value)
 
 from datetime import datetime
 class DateTimeField(Field):

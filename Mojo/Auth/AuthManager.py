@@ -20,7 +20,7 @@ def authenticate(userObj, password):
     Authentication in Mojo uses the ``bcrypt`` library for encrypting passwords and is a requirement for using
     the Auth module.
     """
-    if bcrypt.hashpw(password, userObj.password.get_value()) == userObj.password.get_value():
+    if bcrypt.hashpw(password, userObj.password) == userObj.password:
         return True
     else:
         return False

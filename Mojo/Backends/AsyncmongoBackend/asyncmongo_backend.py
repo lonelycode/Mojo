@@ -59,10 +59,10 @@ class Collection(CollectionModelInterface):
 
     @gen.engine
     def save(self, document, callback):
-        if document._id.get_value():
+        if document._id:
             temp_doc = document.get_value()
             del(temp_doc['_id'])
-            return_tuple, error = yield gen.Task(self.session._db[self.collection_name].update, {'_id': document._id.get_value()}, {"$set":temp_doc})
+            return_tuple, error = yield gen.Task(self.session._db[self.collection_name].update, {'_id': document._id}, {"$set":temp_doc})
         else:
             logging.info('Asyncmongo does not return ObjectID on insert, please update _id property of model manually before further manipulation')
             return_tuple, error = yield gen.Task(self.session._db[self.collection_name].insert, document.get_value())
@@ -74,7 +74,7 @@ class Collection(CollectionModelInterface):
         return_values = []
         for document in documents:
             print 'Deleting: ', document
-            ret_val = yield gen.Task(self.session._db[self.collection_name].remove, document._id.get_value())
+            ret_val = yield gen.Task(self.session._db[self.collection_name].remove, document._id)
             return_values.append(ret_val)
 
         callback(return_values)

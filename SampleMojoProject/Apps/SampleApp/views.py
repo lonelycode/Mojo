@@ -13,16 +13,14 @@ class myRequestHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
 
         posts = yield gen.Task(BlogPost.find_async, {'published':True}, sort=[('date_published',1)])
 
-        value_list=[1,2,3]
-        v2 = []
-        for item in value_list:
-            t = Tag({'tag_name':item})
-            v2.append(t)
+        for p in posts[:3]:
+            print p._id
+            print p.title
+            print p.post_intro
+            print p.date_published.day
 
-        a = Tag({'tag_name':'banana'})
-        yield gen.Task(a.save_async)
+            print p
 
-        for p in v2:
-            print p.tag_name
+
 
         self.render('test.html', message='Your face')

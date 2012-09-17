@@ -47,7 +47,7 @@ class Collection(CollectionModelInterface):
     def delete(self, documents, *args, **kwargs):
         return_values = []
         for document in documents:
-            ret_val = self.session._db[self.collection_name].remove(document._id.get_value())
+            ret_val = self.session._db[self.collection_name].remove(document._id)
             return_values.append(ret_val)
 
         return return_values

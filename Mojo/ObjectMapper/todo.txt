@@ -1,0 +1,13 @@
+Model:
+- On creation, needs to:
+    - re-create all attributes as objects of type base_type
+    - keep a dict of _data, keyed as follows:
+        {attr_name: attr_field_class_deep_copy}
+    - On value access of model attribute:
+        - Returns base type (so all methods exposed)
+    - On assignment:
+        - Ovverride just as it does now, assigning value to:
+            1. field_class (for validation)
+            2. real attribute (for regular access)
+    - On Save:
+        - Validate model field types

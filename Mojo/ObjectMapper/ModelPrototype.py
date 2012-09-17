@@ -42,6 +42,8 @@ class Model(dict):
 
     """
 
+    __field_map = {}
+
     def __init__(self, data=None):
 
         self.__initialise_dictionary_from_classvars()
@@ -59,12 +61,12 @@ class Model(dict):
     def __getattr__(self, item):
         print "Get attr called"
         if self.has_key(item):
-            return self[item].get_value()
+            return self[item]
 
     def __setattr__(self, key, value):
         if self.has_key(key):
-            self[key].value = value
-            self.__dict__[key].value = value
+            self[key] = value
+            self.__field_map[key].value = value
         else:
             raise ValueError('Key does not exist in model')
 
@@ -80,15 +82,15 @@ class Model(dict):
 
         class_attrs = [attr for attr in self.__class__.__dict__ if '__' not in attr]
         for c in class_attrs:
-            self.__dict__[c] = copy.deepcopy(self.__class__.__dict__[c])
-            self[c] = copy.deepcopy(self.__class__.__dict__[c])
+            if c not in EXCLUSIONS:
+                self.__field_map[c] = copy.deepcopy(self.__class__.__dict__[c])
+                self[c] = copy.deepcopy(self.__class__.__dict__[c]).base_type
 
 
     def __instantiate_from_dict(self, data):
         """
         Will populate the model from a dictionary passed as a constructor.
         """
-
         if type(data) == dict:
             for key in data.keys():
                 if self.has_key(key):
@@ -96,11 +98,11 @@ class Model(dict):
                     if isinstance(val, dict):
                         model_instance = self.__class__.__dict__[key].to(val)
                         self[key] = model_instance
-                        self.__dict__[key].value = model_instance
+                        self.__field_map[key].value = model_instance
                     else:
-                        print 'ADDING %s' % data[key]
-                        self[key].value = data[key]
-                        self.__dict__[key].value = data[key]
+                        self.__dict__[key] = data[key]
+                        self[key] = data[key]
+                        self.__field_map[key].value = data[key]
 
                 else:
                     logging.warning("Ignoring '%s' from input, couldn't find matching model Field entry" % (key) )
@@ -116,7 +118,7 @@ class Model(dict):
 
         for key in self.keys():
             if key not in EXCLUSIONS:
-                self[key].validate()
+                self.__field_map[key].validate()
 
     def __get_value(self):
         """
@@ -128,8 +130,8 @@ class Model(dict):
         ret_val = {}
         for key in self.keys():
             if key not in EXCLUSIONS:
-                if self[key].get_value():
-                    ret_val[key] = self[key].get_value()
+                if self[key]:
+                    ret_val[key] = self.__field_map[key].get_value()
 
         return ret_val
 
@@ -400,12 +402,7 @@ class Model(dict):
     @classmethod
     def create(cls, dictionary):
 
-        instance = cls()
-        for (key, value) in dictionary.items():
-            try:
-                setattr(instance, str(key), value)
-            except TypeError, e:
-                logging.warn(e)
+        instance = cls(dictionary)
 
         return instance
 
@@ -447,8 +444,8 @@ class EmbeddedModelField(Field):
         super(EmbeddedModelField, self).__init__(**kwargs)
 
     def get_value(self):
-        if self.value:
-            return self.value.get_value()
+        if self._value:
+            return self._value.get_value()
         else:
             return None
 
