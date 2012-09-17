@@ -84,7 +84,7 @@ class Model(dict):
         for c in class_attrs:
             if c not in EXCLUSIONS:
                 self.__field_map[c] = copy.deepcopy(self.__class__.__dict__[c])
-                self[c] = copy.deepcopy(self.__class__.__dict__[c]).base_type
+                self[c] = None
 
 
     def __instantiate_from_dict(self, data):
@@ -131,7 +131,8 @@ class Model(dict):
         for key in self.keys():
             if key not in EXCLUSIONS:
                 if self[key]:
-                    ret_val[key] = self.__field_map[key].get_value()
+                    if self[key] is not None:
+                        ret_val[key] = self.__field_map[key].get_value()
 
         return ret_val
 
