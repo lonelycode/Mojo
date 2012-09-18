@@ -1,5 +1,7 @@
 Forms:
 - Model-to-form generator
+- Add more Fields to cover: Password and TextArea so they map better to forms
+- Figure out how to pass-through validation (at least required fields from Model to Form types.)
 
 Admin:
 - Setting for sync backend to use

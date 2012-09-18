@@ -13,14 +13,34 @@ class myRequestHandler(MojoRequestHandler, MojoAuthMixin, SessionMixin_Async):
 
         posts = yield gen.Task(BlogPost.find_async, {'published':True}, sort=[('date_published',1)])
 
-        for p in posts[:3]:
-            print p._id
-            print p.title
-            print p.post_intro
-            print p.date_published.day
+        from Mojo.Forms.MojoFormHelper import model_as_form
 
-            print p
+        thisForm = model_as_form(BlogPost, ignore=['tags', 'comments'])
 
+        print "Testing unbound:"
+        print "================"
+        for f in thisForm._fields:
+            print "Name: %s Type: %s" % (f, str(type(thisForm._fields[f])))
+
+        thisForm = model_as_form(BlogPost, posts[3], ignore=['tags', 'comments'])
+
+        print "Testing bound:"
+        print "=============="
+        for f in thisForm._fields:
+            try:
+                print "Name: %s Type: %s Value: %s" % (f, str(type(thisForm._fields[f])), thisForm._fields[f])
+            except:
+                print 'Problem on: ', f
 
 
         self.render('test.html', message='Your face')
+
+        print "Testing override:"
+        print "================="
+        from wtforms.fields import TextAreaField
+        thisForm = model_as_form(BlogPost, posts[3], ignore=['tags', 'comments'], override={'post_body': TextAreaField, 'post_intro': TextAreaField})
+        for f in thisForm._fields:
+            try:
+                print "Name: %s Type: %s Value: %s" % (f, str(type(thisForm._fields[f])), thisForm._fields[f])
+            except:
+                print 'Problem on: ', f

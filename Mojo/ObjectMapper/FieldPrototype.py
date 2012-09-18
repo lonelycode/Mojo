@@ -48,7 +48,7 @@ class Field(object):
 
     base_type = None
 
-    def __init__(self, value=None, allow_empty=True, default=None, **kwargs):
+    def __init__(self, value=None, allow_empty=True, default=None, friendly='', **kwargs):
         """
         Base initialisation - will ensure that the field basics are covered.
 
@@ -59,7 +59,11 @@ class Field(object):
         """
         self._value = value
         self.allow_empty = allow_empty
+
         self.default = default
+
+        self.friendly = friendly
+
 
 
     def _getValue( self ):
