@@ -3,12 +3,10 @@ from Mojo.ObjectMapper.Fields import *
 import datetime
 
 class Tag(Model):
-    _id = ObjectIDField()
     tag_name = StringField()
 
 
 class Comment(Model):
-    _id = ObjectIDField()
     handle = StringField()
     comment = StringField()
     visible = BooleanField(default=True)
@@ -21,6 +19,6 @@ class BlogPost(Model):
     post_intro = StringField()
     post_body = StringField()
     date_published = DateTimeField(default=datetime.datetime.now())
-    tags = ListField()
-    comments = ListField()
+    tags = ListField(of=Tag)
+    comments = ListField(of=Comment)
     published = BooleanField(default=True)

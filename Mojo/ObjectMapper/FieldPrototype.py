@@ -68,8 +68,12 @@ class Field(object):
 
     def _getValue( self ):
         return self.get_value()
+
     def _setValue( self, value ):
-        self._value = value
+        if isinstance(value, self.__class__):
+            self.value = value.value
+        else:
+            self._value = value
 
     value = property( _getValue, _setValue )
 
@@ -79,6 +83,8 @@ class Field(object):
         if you want to add coercion to your model (see the ``StringField`` and ``FloatField`` for an example)
         """
         if isinstance(self._value, self.base_type):
+            return True
+        elif isinstance(self._value, self.__class__):
             return True
         else:
             if self.allow_empty:
@@ -123,16 +129,19 @@ class Field(object):
                 return None
 
     def __repr__(self):
-        return self
+        return str(self)
 
     def __unicode__(self):
-        return unicode(self._value)
+        return unicode(self.get_value())
 
     def __str__(self):
-        return str(self._value)
+        return str(self.get_value())
 
     def __len__(self):
         if self._value:
-            return len(self._value)
+            if type(self._value) is not bool:
+                return len(self.get_value())
+            else:
+                return self._value
         else:
             return 0

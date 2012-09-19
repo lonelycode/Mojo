@@ -56,9 +56,10 @@ class CollectionModelInterface(object):
         else:
             self.collection_name = type(self.model).__name__
 
-    def _return_model_object(self,dict):
-        if dict:
-            return self.model.create(dict)
+    def _return_model_object(self,d):
+        if d:
+            this_model = self.model.create(d)
+            return this_model
         else:
             return None
 

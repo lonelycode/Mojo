@@ -1,5 +1,6 @@
 from FieldPrototype import Field
 import logging
+import copy
 
 
 class StringField(Field):
@@ -151,16 +152,56 @@ class ListField(Field):
     """
     base_type = list
 
+    def __init__(self, of = None, *args, **kwargs):
+        self.of = of
+
+        super(ListField, self).__init__(*args, **kwargs)
+
     def expand_list(self, list):
+        #TODO: This is exhibiting the same memory copy issues as it had before, can't copy ModelPrototypes, so need another solution to implement .of()
         ret_list = []
         for item in list:
             if hasattr(item, 'get_value'):
-                val = item.get_value()
+
+                if self.of:
+                    val = item
+                else:
+                    val = item.get_value()
             else:
                 val = item
             ret_list.append(val)
 
         return ret_list
+
+    def _setValue( self, value ):
+        #TODO: Any changes to the above may impact here.
+        set_list = []
+        if self.of:
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, self.of):
+                        set_list.append(item)
+                    else:
+                        thisObject = self.of(item)
+                        set_list.append(thisObject)
+
+                self._value = set_list
+
+            elif isinstance(value, self.__class__):
+                self.value = value.value
+
+            elif value is None:
+                self._value = None
+
+            else:
+                raise ValueError('Input must be a list.')
+        else:
+            self._value = value
+
+    def _getValue( self ):
+        return self.get_value()
+
+    value = property( _getValue, _setValue )
 
     def get_value(self):
         if self._value:
@@ -181,7 +222,7 @@ class ObjectIDField(Field):
     base_type = ObjectId
 
     def __repr__(self):
-        return self
+        return str(self)
 
     def __unicode__(self):
         return unicode(self._value)

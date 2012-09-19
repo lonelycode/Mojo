@@ -6,6 +6,19 @@ import copy
 #TODO: This is a little hacky, an coul cause problems in future.
 EXCLUSIONS = ['collection_name']
 
+class ModelMetaClass(type):
+
+    def __new__(cls, name, bases, attrs):
+
+#        # Add the document's fields to the _data
+#        for attr_name, attr_value in attrs.items():
+#            if hasattr(attr_value, "__class__") and issubclass(attr_value.__class__, Field):
+#                attr_value.name = attr_name
+
+        new_class = type.__new__(cls, name, bases, attrs)
+        print new_class.__dict__
+        return new_class
+
 class Model(dict):
     """
     Basic Model class that defines the behaviours of Model objects, the class enables simple definition::
@@ -42,6 +55,7 @@ class Model(dict):
 
     """
 
+
     __field_map = {}
 
     def __init__(self, data=None):
@@ -54,19 +68,19 @@ class Model(dict):
     def get_value(self):
         """
         Returns the value of the model - this is a ``dict`` - if you're having trouble getting data out of the
-        model, calling this function will access the ictionary directly.
+        model, calling this function will access the dictionary directly.
         """
         return self.__get_value()
 
     def __getattr__(self, item):
-        print "Get attr called"
         if self.has_key(item):
-            return self[item]
+            return self.__field_map[key].value
 
     def __setattr__(self, key, value):
         if self.has_key(key):
-            self[key] = value
             self.__field_map[key].value = value
+            self[key] = self.__field_map[key].value
+            self.__dict__[key] = self.__field_map[key].value
         else:
             raise ValueError('Key does not exist in model')
 
@@ -84,25 +98,29 @@ class Model(dict):
         for c in class_attrs:
             if c not in EXCLUSIONS:
                 self.__field_map[c] = copy.deepcopy(self.__class__.__dict__[c])
-                self[c] = None
+                self[c] = self.__field_map[c]
 
 
     def __instantiate_from_dict(self, data):
         """
         Will populate the model from a dictionary passed as a constructor.
         """
+
         if type(data) == dict:
             for key in data.keys():
                 if self.has_key(key):
                     val = data[key]
                     if isinstance(val, dict):
                         model_instance = self.__class__.__dict__[key].to(val)
-                        self[key] = model_instance
                         self.__field_map[key].value = model_instance
+                        self.__dict__[key] = self.__field_map[key].value
+                        self[key] = self.__field_map[key].value
+
                     else:
-                        self.__dict__[key] = data[key]
-                        self[key] = data[key]
                         self.__field_map[key].value = data[key]
+                        self.__dict__[key] = self.__field_map[key].value
+                        self[key] = self.__field_map[key].value
+
 
                 else:
                     logging.warning("Ignoring '%s' from input, couldn't find matching model Field entry" % (key) )
@@ -128,13 +146,14 @@ class Model(dict):
         self.validate()
 
         ret_val = {}
-        for key in self.keys():
-            if key not in EXCLUSIONS:
-                if self[key]:
-                    if self[key] is not None:
-                        ret_val[key] = self.__field_map[key].get_value()
+        for k,v in self.iteritems():
+            if k not in EXCLUSIONS:
+                if v:
+                    ret_val[k] = v
+                else:
+                    ret_val[k] = None
 
-        return ret_val
+        return dict(ret_val)
 
     @classmethod
     def insert(klass, to_insert):
@@ -404,7 +423,6 @@ class Model(dict):
     def create(cls, dictionary):
 
         instance = cls(dictionary)
-
         return instance
 
     def __repr__(self):
@@ -419,7 +437,7 @@ class Model(dict):
 
 
 
-
+#TODO: Update this the latest _value behaviours
 class EmbeddedModelField(Field):
     """
     EmbeddedField type for models that enables embedding of documents into the model representation.
@@ -455,6 +473,3 @@ class EmbeddedModelField(Field):
 
     __repr__ = __str__
 
-class msgs(Model):
-    _id = StringField()
-    msg = StringField()
