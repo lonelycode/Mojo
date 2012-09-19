@@ -70,7 +70,7 @@ database back-end that has been chosen.</p>
 extend your models.</p>
 <span class="target" id="module-Mojo.ObjectMapper.FieldPrototype"></span><dl class="class">
 <dt id="Mojo.ObjectMapper.FieldPrototype.Field">
-<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.FieldPrototype.</tt><tt class="descname">Field</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.FieldPrototype.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.FieldPrototype.</tt><tt class="descname">Field</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>friendly=''</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.FieldPrototype.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p><tt class="docutils literal"><span class="pre">FieldPrototype.Field</span></tt> is a parent class for the Fields exposed in <tt class="docutils literal"><span class="pre">ObjectMapper.Fields</span></tt>,
 Offering base functionality and validation options:
 #. validate_type - validates to ensure the base_type class variable is met
@@ -147,7 +147,7 @@ if you want to add coercion to your model (see the <tt class="docutils literal">
 <p>These fields are the default field types that come with Mojo and are used throughout the framework.</p>
 <span class="target" id="module-Mojo.ObjectMapper.Fields"></span><dl class="class">
 <dt id="Mojo.ObjectMapper.Fields.BooleanField">
-<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">BooleanField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.BooleanField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">BooleanField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>friendly=''</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.BooleanField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores True or False data.</p>
 <p><strong>Validation methods</strong></p>
 <ul class="simple">
@@ -163,7 +163,7 @@ if you want to add coercion to your model (see the <tt class="docutils literal">
 
 <dl class="class">
 <dt id="Mojo.ObjectMapper.Fields.DateTimeField">
-<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">DateTimeField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.DateTimeField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">DateTimeField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>friendly=''</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.DateTimeField" title="Permalink to this definition">¶</a></dt>
 <dd><p>DateTime object storage.</p>
 <p><strong>Validation methods</strong></p>
 <ul class="simple">
@@ -213,7 +213,7 @@ if you want to add coercion to your model (see the <tt class="docutils literal">
 
 <dl class="class">
 <dt id="Mojo.ObjectMapper.Fields.ListField">
-<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">ListField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.ListField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">ListField</tt><big>(</big><em>of=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.ListField" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores a list of objects, objects in the list MUST be of type &#8216;Mojo.ObjectMapper.ModelPrototype.Model&#8217; as it will
 try to expand and retrieve the relevant value from each on access.</p>
 <p><strong>Validation methods</strong></p>
@@ -230,7 +230,7 @@ try to expand and retrieve the relevant value from each on access.</p>
 
 <dl class="class">
 <dt id="Mojo.ObjectMapper.Fields.ObjectIDField">
-<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">ObjectIDField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.ObjectIDField" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">ObjectIDField</tt><big>(</big><em>value=None</em>, <em>allow_empty=True</em>, <em>default=None</em>, <em>friendly=''</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.ObjectIDField" title="Permalink to this definition">¶</a></dt>
 <dd><p>ObjectId storage - required for storing data in MongoDB, base type is <tt class="docutils literal"><span class="pre">bson.objectid.ObjectId</span></tt>.</p>
 <p><strong>Validation methods</strong></p>
 <ul class="simple">
@@ -389,7 +389,7 @@ input parameters (non-blocking):</p>
 <dt id="Mojo.ObjectMapper.ModelPrototype.Model.get_value">
 <tt class="descname">get_value</tt><big>(</big><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.ModelPrototype.Model.get_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the value of the model - this is a <tt class="docutils literal"><span class="pre">dict</span></tt> - if you&#8217;re having trouble getting data out of the
-model, calling this function will access the ictionary directly.</p>
+model, calling this function will access the dictionary directly.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -468,6 +468,12 @@ and instantiated model instance:</p>
 <span class="k">yield</span> <span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">model_instance</span><span class="o">.</span><span class="n">save_async</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Mojo.ObjectMapper.ModelPrototype.Model.validate">
+<tt class="descname">validate</tt><big>(</big><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.ModelPrototype.Model.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates the entire model, is called when _get_value() is called.</p>
 </dd></dl>
 
 </dd></dl>

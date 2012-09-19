@@ -59,13 +59,25 @@ class Collection(CollectionModelInterface):
 
     @gen.engine
     def save(self, document, callback):
-        if document._id:
-            temp_doc = document.get_value()
-            del(temp_doc['_id'])
-            return_tuple, error = yield gen.Task(self.session._db[self.collection_name].update, {'_id': document._id}, {"$set":temp_doc})
-        else:
-            logging.info('Asyncmongo does not return ObjectID on insert, please update _id property of model manually before further manipulation')
-            return_tuple, error = yield gen.Task(self.session._db[self.collection_name].insert, document.get_value())
+        temp_doc = dict(document.get_value())
+
+        if '_id' in temp_doc.keys():
+            if temp_doc['_id'] is None:
+                del(temp_doc['_id'])
+                logging.debug('Removed null _id value for save')
+                return_tuple, error = yield gen.Task(self.session._db[self.collection_name].save, temp_doc)
+            else:
+                del(temp_doc['_id'])
+                return_tuple, error = yield gen.Task(self.session._db[self.collection_name].update, {'_id': document._id}, {"$set":temp_doc})
+
+
+#        logging.info('Asyncmongo does not return ObjectID on insert, please update _id property of model manually before further manipulation')
+#        else:
+#            for k, v in temp_doc.iteritems():
+#                if v is None:
+#                    del(temp_doc, k)
+#            logging.info('Asyncmongo does not return ObjectID on insert, please update _id property of model manually before further manipulation')
+#            return_tuple, error = yield gen.Task(self.session._db[self.collection_name].insert, temp_doc)
 
         callback(document)
 

@@ -17,6 +17,8 @@ Mojo/Backends/AsyncmongoBackend/asyncmongo_backend.py
 Mojo/Backends/PyMongoBackend/__init__.py
 Mojo/Backends/PyMongoBackend/pymongo_backend.py
 Mojo/Backends/PyMongoBackend/pymongo_backend_test.py
+Mojo/Forms/MojoFormHelper.py
+Mojo/Forms/__init__.py
 Mojo/ObjectMapper/FieldPrototype.py
 Mojo/ObjectMapper/Fields.py
 Mojo/ObjectMapper/ModelPrototype.py
