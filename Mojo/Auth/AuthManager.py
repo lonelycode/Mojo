@@ -38,7 +38,7 @@ def set_password(userObj, new_password):
 
     """
     new_pw = bcrypt.hashpw(new_password, bcrypt.gensalt())
-    userObj.password = new_pw
+    userObj.password = unicode(new_pw)
 
     return userObj
 
@@ -81,11 +81,12 @@ def is_member_of(userObj, groupObj):
     """
     Will determine is a user is a member of a group. Returns ``Tru`` or ``False``
     """
+
     if userObj.groups:
-        if groupObj in userObj.groups:
-            return True
-        else:
-            return False
+        for group in userObj.groups:
+            if group.group_name == groupObj.group_name:
+                return True
+        return False
     else:
         return False
 
@@ -108,8 +109,13 @@ def remove_from_group(userObj, groupObj):
     Removes a user from the group, returns ``True`` if successful, ``False`` if the user is not a member of the group
     """
     if is_member_of(userObj, groupObj):
-        userObj.groups.remove(groupObj)
-        return True
+        new_list = []
+        for group in userObj.groups:
+            if group.group_name != groupObj.group_name:
+                new_list.append(group)
+
+        userObj.groups = new_list
+        return userObj
     else:
-        return False
+        return userObj
 

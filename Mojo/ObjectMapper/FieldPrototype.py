@@ -119,7 +119,7 @@ class Field(object):
         ``__str__`` and ``__unicode__`` to change this behaviour.
         """
 
-        if self._value:
+        if self._value is not None:
             self.validate()
             return self._value
         else:

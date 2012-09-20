@@ -6,18 +6,7 @@ import copy
 #TODO: This is a little hacky, an coul cause problems in future.
 EXCLUSIONS = ['collection_name']
 
-class ModelMetaClass(type):
 
-    def __new__(cls, name, bases, attrs):
-
-#        # Add the document's fields to the _data
-#        for attr_name, attr_value in attrs.items():
-#            if hasattr(attr_value, "__class__") and issubclass(attr_value.__class__, Field):
-#                attr_value.name = attr_name
-
-        new_class = type.__new__(cls, name, bases, attrs)
-        print new_class.__dict__
-        return new_class
 
 class Model(dict):
     """

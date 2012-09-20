@@ -1,5 +1,6 @@
 from Mojo.Backends.base_interface import CollectionModelInterface, SessionInterface
 import pymongo
+import logging
 
 class Session(SessionInterface):
     def _setup_connection(self):
@@ -25,14 +26,14 @@ class Collection(CollectionModelInterface):
         else:
             insert_list = []
             for doc in documents:
-                del doc.__data__['_id']
+                del doc['_id']
                 insert_list.append(doc.get_value())
 
             ids = self.session._db[self.collection_name].insert(insert_list)
 
             index = 0
             for doc in documents:
-                doc.__data__['_id'] = ids[index]
+                doc['_id'] = ids[index]
                 index += 1
 
                 ret_vals.append(doc)
@@ -40,7 +41,12 @@ class Collection(CollectionModelInterface):
             return ret_vals
 
     def save(self, document, *args, **kwargs):
-        returnID = self.session._db[self.collection_name].save(document.get_value(), *args, **kwargs)
+        temp_doc = dict(document)
+
+        if not document._id:
+            del temp_doc['_id']
+
+        returnID = self.session._db[self.collection_name].save(temp_doc, *args, **kwargs)
         document._id = returnID
         return document
 

@@ -117,6 +117,20 @@ class BooleanField(Field):
     """
     base_type = bool
 
+    def get_value(self):
+        """
+        Returns the value stored in the field (string representations will be shown if you print the model, override
+        ``__str__`` and ``__unicode__`` to change this behaviour.
+        """
+
+        if self._value is not None:
+            return self._value
+        else:
+            if self.default:
+                return self.default
+            else:
+                return False
+
 class FloatField(IntegerField):
     """
     Stores Float values.
@@ -142,7 +156,7 @@ class FloatField(IntegerField):
 
 class ListField(Field):
     """
-    Stores a list of objects, objects in the list MUST be of type 'Mojo.ObjectMapper.ModelPrototype.Model' as it will
+    Stores a list of objects, objects in the list can be of type 'Mojo.ObjectMapper.ModelPrototype.Model' and it will
     try to expand and retrieve the relevant value from each on access.
 
     **Validation methods**
@@ -151,6 +165,12 @@ class ListField(Field):
 
     """
     base_type = list
+
+    def __getitem__(self, item):
+        return self._value[item]
+
+    def __setitem__(self, key, value):
+        self._value[key] = value
 
     def __init__(self, of = None, *args, **kwargs):
         self.of = of

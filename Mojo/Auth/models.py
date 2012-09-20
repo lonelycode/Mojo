@@ -38,7 +38,7 @@ class User(Model):
     username = StringField(allow_empty=False)
     password = StringField(allow_empty=False)
     email = StringField()
-    groups = ListField()
+    groups = ListField(of=Group)
     active = BooleanField(default = True)
     profile = EmbeddedModelField(to=Profile)
     is_superuser = BooleanField(default = False)

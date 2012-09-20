@@ -85,7 +85,6 @@ class Collection(CollectionModelInterface):
     def delete(self, documents, callback):
         return_values = []
         for document in documents:
-            print 'Deleting: ', document
             ret_val = yield gen.Task(self.session._db[self.collection_name].remove, document._id)
             return_values.append(ret_val)
 
