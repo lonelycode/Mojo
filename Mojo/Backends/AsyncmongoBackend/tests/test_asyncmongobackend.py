@@ -8,13 +8,14 @@ from Mojo.Backends.AsyncmongoBackend.asyncmongo_backend import Session, Collecti
 from Mojo.ObjectMapper.ModelPrototype import Model
 from Mojo.ObjectMapper.Fields import *
 
-DB = Session(host='127.0.0.1', port=27017, db_name='asyncmongoBackendTest')
+
 
 class AuthManagerTest(testing.AsyncTestCase):
     def get_new_ioloop(self):
         return IOLoop.instance()
 
     def test_find_insert_find_one_delete(self):
+        DB = Session(host='127.0.0.1', port=27017, db_name='asyncmongoBackendTest')
         class testModel(Model):
             _id = ObjectIDField()
             title = StringField()
@@ -66,6 +67,7 @@ class AuthManagerTest(testing.AsyncTestCase):
         self.assertEqual(as_dict, insert_data)
 
     def test_save(self):
+        DB = Session(host='127.0.0.1', port=27017, db_name='asyncmongoBackendTest')
         class testModel(Model):
             _id = ObjectIDField()
             title = StringField()
@@ -141,6 +143,7 @@ class AuthManagerTest(testing.AsyncTestCase):
         self.assertEqual(as_dict, changed_data)
 
     def test_delete(self):
+        DB = Session(host='127.0.0.1', port=27017, db_name='asyncmongoBackendTest')
         class testModel(Model):
             _id = ObjectIDField()
             title = StringField()
