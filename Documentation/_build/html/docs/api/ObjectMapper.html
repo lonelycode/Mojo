@@ -159,6 +159,13 @@ if you want to add coercion to your model (see the <tt class="docutils literal">
 <dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">bool</span></tt></p>
 </dd></dl>
 
+<dl class="method">
+<dt id="Mojo.ObjectMapper.Fields.BooleanField.get_value">
+<tt class="descname">get_value</tt><big>(</big><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.BooleanField.get_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value stored in the field (string representations will be shown if you print the model, override
+<tt class="docutils literal"><span class="pre">__str__</span></tt> and <tt class="docutils literal"><span class="pre">__unicode__</span></tt> to change this behaviour.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -214,7 +221,7 @@ if you want to add coercion to your model (see the <tt class="docutils literal">
 <dl class="class">
 <dt id="Mojo.ObjectMapper.Fields.ListField">
 <em class="property">class </em><tt class="descclassname">Mojo.ObjectMapper.Fields.</tt><tt class="descname">ListField</tt><big>(</big><em>of=None</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.ObjectMapper.Fields.ListField" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stores a list of objects, objects in the list MUST be of type &#8216;Mojo.ObjectMapper.ModelPrototype.Model&#8217; as it will
+<dd><p>Stores a list of objects, objects in the list can be of type &#8216;Mojo.ObjectMapper.ModelPrototype.Model&#8217; and it will
 try to expand and retrieve the relevant value from each on access.</p>
 <p><strong>Validation methods</strong></p>
 <ul class="simple">
