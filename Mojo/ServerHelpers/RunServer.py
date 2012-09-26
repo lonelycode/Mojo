@@ -101,12 +101,14 @@ def init_run_server(ProjectModule):
         routes.extend(urls.urlpatterns)
         logging.debug("--Added URL's for: %s" % (appName))
 
+    loaded_ui_modules_list = []
     for appName in project_settings.INSTALLED_APPS:
         logging.debug("--Adding UI Modules for %s" % appName)
         ui_module_string = 'from Apps.%s import ui_modules' % (appName)
         exec(ui_module_string)
 
-        ui_modules = ui_modules
+        #TODO: This won't work with multiple apps, as it is only imported once!!
+        loaded_ui_modules_list.append(ui_modules)
 
     thisSocketRouter = setup_socket_handler_routers(module_name, project_settings.INSTALLED_APPS)
 
@@ -123,7 +125,7 @@ def init_run_server(ProjectModule):
         BACKEND_COLLECTION = Collection
 
 
-    application = DynaMojoTornadoApplication(project_settings, thisSocketRouter, routes, ui_modules, db_session)
+    application = DynaMojoTornadoApplication(project_settings, thisSocketRouter, routes, loaded_ui_modules_list, db_session)
 
     application.listen(project_settings.LISTEN_PORT)
     tornadio2.SocketServer(application)

@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
     <link rel="next" title="What are apps" href="apps.html" />
-    <link rel="prev" title="An introduction to Mojo" href="intro.html" /> 
+    <link rel="prev" title="Mojo - a framework for Tornado" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="apps.html" title="What are apps"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="An introduction to Mojo"
+          <a href="../index.html" title="Mojo - a framework for Tornado"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -56,6 +56,93 @@
             
   <div class="section" id="quickstart-using-mojo-for-the-first-time">
 <h1>Quickstart: Using Mojo for the first time<a class="headerlink" href="#quickstart-using-mojo-for-the-first-time" title="Permalink to this headline">¶</a></h1>
+<p>This is a quickstart tutorial that will get you set up and running with Mojo for the first time.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Download the Mojo distribution</li>
+<li>Decompress the zip file</li>
+<li>Make sure you have installed the required support packages: <tt class="docutils literal"><span class="pre">Tornado</span></tt>, <tt class="docutils literal"><span class="pre">TornadIO2</span></tt>, <tt class="docutils literal"><span class="pre">bcrypt</span></tt> and <tt class="docutils literal"><span class="pre">wtforms</span></tt></li>
+<li>From the command line in the new folder run <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt></li>
+</ol>
+<p>This should install Mojo into your python path. However, there is one more step that you may need to do to fully
+take advantage of Mojo&#8217;s helper apps, and that is to make mojo_manager available in your PATH, for linux and Mac OSX users,
+this can be accomplished by doing something like:</p>
+<div class="highlight-python"><pre>ln /usr/bin/python2.7/Lib/site-packages/Mojo/mojo_manager.py /usr/sbin/mojo_manager.py</pre>
+</div>
+<p>On windows, adding the Mojo site-packages directory should be enough to give gloabl access to <tt class="docutils literal"><span class="pre">mojo_manager</span></tt></p>
+<p>Once you&#8217;ve done that, you should be able to test your installation by opeining a python window and typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Mojo</span>
+</pre></div>
+</div>
+<p><em>Note:</em> It is recommended to deploy Mojo in something like virtualenv to ensure you can easily keep it (and your app)
+up to date without affecting your main Python setup and other projects.</p>
+</div>
+<div class="section" id="your-first-project">
+<h2>Your first project<a class="headerlink" href="#your-first-project" title="Permalink to this headline">¶</a></h2>
+<p>Mojo sets up it&#8217;s projects as a project folder that contains a series of Apps, these apps are independent from one another
+and offer a way to group different functional areas of your app away into discrete units. The typical Mojo project will have a
+folder structure that looks like:</p>
+<div class="highlight-python"><pre>--[ProjectName]
+----[static]
+----[Apps]
+------[App 1]
+--------[templates]
+--------models.py
+--------ui_modules.py
+--------urls.py
+--------views.py
+------[App 2]
+------[App 3]
+----settings.py
+----runserver.py</pre>
+</div>
+<p>A quick run down of what each of these files and folders are:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">[ProjectName]</span></tt>: Your projct folder, this houses all the apps, modules settings and server for your tornado project</li>
+<li><tt class="docutils literal"><span class="pre">[static]</span></tt>: All your static assets can be placed in here and they will be referenced automatically when you use the <tt class="docutils literal"><span class="pre">static_url(&quot;images/logo.png&quot;)</span></tt> built in tornado function</li>
+<li><tt class="docutils literal"><span class="pre">[Apps]</span></tt>: Houses all of your individual apps, these break down into a series of base files that make your app work:<ul>
+<li><tt class="docutils literal"><span class="pre">[App</span> <span class="pre">1]/models.py</span></tt>: This is your model definition file, here you set out what database tables you want to use</li>
+<li><tt class="docutils literal"><span class="pre">[App</span> <span class="pre">1]/ui_modules.py</span></tt>: Your UI Modules for Tornado are housed here, these are automatically loaded so they can be used directly from your templates</li>
+<li><tt class="docutils literal"><span class="pre">[App</span> <span class="pre">1]/urls.py</span></tt>: The URL&#8217;s for this app, ampping to the relevant Request Handlers</li>
+<li><tt class="docutils literal"><span class="pre">[App</span> <span class="pre">1]/views.py</span></tt>: The request handlers that will manage the various app&#8217;s functions</li>
+</ul>
+</li>
+<li><tt class="docutils literal"><span class="pre">settings.py</span></tt>: All the settings for your application</li>
+<li><tt class="docutils literal"><span class="pre">runserver.py</span></tt>: This, strangely enough, runs your web server</li>
+</ul>
+<p>To create your first app, you simply need to invok ethe mojo_manager application,
+this will create your project folder as follows:</p>
+<p>mojo_manager.py -p MyNewProject
+cd MyNewProject
+mojo_manager.py -a HelloWorldApp</p>
+<p>That&#8217;s it, all the files you need to get started should be created and in nbamed appropriately.</p>
+</div>
+<div class="section" id="setup-the-app">
+<h2>Setup the App<a class="headerlink" href="#setup-the-app" title="Permalink to this headline">¶</a></h2>
+<p>To get started, lets set up your settings.py to get your first server up and running. Open <tt class="docutils literal"><span class="pre">settings.py</span></tt> in your favourite editor
+and make sure the <tt class="docutils literal"><span class="pre">INSTALLED_APPS</span></tt> section looks like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;HelloWorldApp&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Once you&#8217;ve made the change, simply save the file and open up your terminal window in the directory where <tt class="docutils literal"><span class="pre">runserver.py</span></tt> is located, then
+type the following:</p>
+<div class="highlight-python"><pre>``python runserver.py``</pre>
+</div>
+<p>You should see:</p>
+<div class="highlight-python"><pre>Starting Mojo tornado server.
+DEBUG:root:Setting up url routers:
+DEBUG:root:--Added URL's for: blog_app
+DEBUG:root:--Adding UI Modules for blog_app
+DEBUG:root:--Added SocketHandler for: blog_app
+DEBUG:root:Found DATABASE setting - creating session for DB: mojo_blog
+INFO:root:Starting up tornadio server on port '8001'
+INFO:root:Entering IOLoop...</pre>
+</div>
+<p>If you navigate to <tt class="docutils literal"><span class="pre">http://localhost:8000</span></tt> you should see the Mojo welcome page. <em>Congratulations, you are running Mojo!</em></p>
+</div>
 </div>
 
 
@@ -64,9 +151,19 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Quickstart: Using Mojo for the first time</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#your-first-project">Your first project</a></li>
+<li><a class="reference internal" href="#setup-the-app">Setup the App</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="intro.html"
-                        title="previous chapter">An introduction to Mojo</a></p>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Mojo - a framework for Tornado</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="apps.html"
                         title="next chapter">What are apps</a></p>
@@ -105,7 +202,7 @@
           <a href="apps.html" title="What are apps"
              >next</a> |</li>
         <li class="right" >
-          <a href="intro.html" title="An introduction to Mojo"
+          <a href="../index.html" title="Mojo - a framework for Tornado"
              >previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
