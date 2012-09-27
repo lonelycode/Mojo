@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
-    <link rel="next" title="Using the ORM and Models in your apps" href="models.html" />
-    <link rel="prev" title="What are apps" href="apps.html" /> 
+    <link rel="next" title="The Mojo ORM and Models" href="models.html" />
+    <link rel="prev" title="Mojo Views" href="views.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="models.html" title="Using the ORM and Models in your apps"
+          <a href="models.html" title="The Mojo ORM and Models"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="apps.html" title="What are apps"
+          <a href="views.html" title="Mojo Views"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -56,6 +56,20 @@
             
   <div class="section" id="routing-pages-with-url-s">
 <h1>Routing pages with URL&#8217;s<a class="headerlink" href="#routing-pages-with-url-s" title="Permalink to this headline">¶</a></h1>
+<p>Mojo moves the URL definition of your app to the file <tt class="docutils literal"><span class="pre">urls.py</span></tt>, this file contains a list object called <tt class="docutils literal"><span class="pre">url_patterns</span></tt>
+that contains tuples mapping a URL to a <tt class="docutils literal"><span class="pre">RequestHandler</span></tt> in your <tt class="docutils literal"><span class="pre">views.py</span></tt>.</p>
+<p>All entries work the same way as they do with standard Tornado mappings, when your server starts up, Mojo will automatically
+concatenate all the URL&#8217;s for you into a single pattern set to ensure that all your apps are available in the project
+without mixing functionality across apps:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">views</span> <span class="kn">import</span> <span class="n">myRequestHandler</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s">&#39;/hello&#39;</span><span class="p">,</span> <span class="n">myRequestHandler</span><span class="p">),</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>All URL patterns can be regex groups - see the Tornado documentation for more details on how to use the URL routing
+in a Tornado app.</p>
 </div>
 
 
@@ -65,11 +79,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="apps.html"
-                        title="previous chapter">What are apps</a></p>
+  <p class="topless"><a href="views.html"
+                        title="previous chapter">Mojo Views</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="models.html"
-                        title="next chapter">Using the ORM and Models in your apps</a></p>
+                        title="next chapter">The Mojo ORM and Models</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/docs/urls.txt"
@@ -102,10 +116,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="models.html" title="Using the ORM and Models in your apps"
+          <a href="models.html" title="The Mojo ORM and Models"
              >next</a> |</li>
         <li class="right" >
-          <a href="apps.html" title="What are apps"
+          <a href="views.html" title="Mojo Views"
              >previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>

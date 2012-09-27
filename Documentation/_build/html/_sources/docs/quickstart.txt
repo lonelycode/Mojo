@@ -1,7 +1,7 @@
 Quickstart: Using Mojo for the first time
 =========================================
 
-This is a quickstart tutorial that will get you set up and running with Mojo for the first time.
+This is a quick-start tutorial that will get you set up and running with Mojo for the first time.
 
 Installation
 ------------
@@ -12,16 +12,19 @@ Installation
 4. From the command line in the new folder run ``python setup.py install``
 
 This should install Mojo into your python path. However, there is one more step that you may need to do to fully
-take advantage of Mojo's helper apps, and that is to make mojo_manager available in your PATH, for linux and Mac OSX users,
+take advantage of Mojo's helper apps, and that is to make ``mojo_manager`` available in your ``PATH``, for linux and Mac OSX users,
 this can be accomplished by doing something like::
 
     ln /usr/bin/python2.7/Lib/site-packages/Mojo/mojo_manager.py /usr/sbin/mojo_manager.py
+    chmod +x /usr/sbin/mojo_manager.py
 
 On windows, adding the Mojo site-packages directory should be enough to give gloabl access to ``mojo_manager``
 
 Once you've done that, you should be able to test your installation by opeining a python window and typing::
 
     import Mojo
+
+If there are no import errors then you shoulod be ready to get started.
 
 *Note:* It is recommended to deploy Mojo in something like virtualenv to ensure you can easily keep it (and your app)
 up to date without affecting your main Python setup and other projects.
@@ -83,7 +86,7 @@ and make sure the ``INSTALLED_APPS`` section looks like this::
 Once you've made the change, simply save the file and open up your terminal window in the directory where ``runserver.py`` is located, then
 type the following::
 
-    ``python runserver.py``
+    python runserver.py
 
 You should see::
 

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>What are apps &mdash; Mojo 0.1 documentation</title>
+    <title>Mojo Apps &mdash; Mojo 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
-    <link rel="next" title="Routing pages with URL’s" href="urls.html" />
+    <link rel="next" title="Mojo Views" href="views.html" />
     <link rel="prev" title="Quickstart: Using Mojo for the first time" href="quickstart.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="urls.html" title="Routing pages with URL’s"
+          <a href="views.html" title="Mojo Views"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="quickstart.html" title="Quickstart: Using Mojo for the first time"
@@ -54,8 +54,24 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="what-are-apps">
-<h1>What are apps<a class="headerlink" href="#what-are-apps" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mojo-apps">
+<h1>Mojo Apps<a class="headerlink" href="#mojo-apps" title="Permalink to this headline">¶</a></h1>
+<p>When developing with Mojo, it&#8217;s more elegant to modularise functionality into Apps, and this is the default behaviour
+of the Mojo server loader.</p>
+<p>Apps serve as a collection of RequestHandlers, URL Mappings, Models and Templates that make up a set of functionality
+in your project.</p>
+<p>To get started with an app in your project, you can use the <tt class="docutils literal"><span class="pre">mojo_manager.py</span></tt> helper application that will auto create
+your project folder for you:</p>
+<div class="highlight-python"><pre>python mojo_manager.py -a [YOUR_APP_NAME]</pre>
+</div>
+<p>This will create an app folder with certain key files:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">models.py</span></tt>: This is where you define your models which can be used with your database and forms</li>
+<li><tt class="docutils literal"><span class="pre">socket_handlers.py</span></tt>: This is where you define your SocketIO behaviour, each app has it&#8217;s own dedicated (multiplexed) channel under <tt class="docutils literal"><span class="pre">/[appname]Socket</span></tt> to separate out functionality</li>
+<li><tt class="docutils literal"><span class="pre">ui_modules.py</span></tt>: The ui_modules you might or mihjgt not be using</li>
+<li><tt class="docutils literal"><span class="pre">urls.py</span></tt>: The URL mappings for your request handlers</li>
+<li><tt class="docutils literal"><span class="pre">views.py</span></tt>: A list of your <tt class="docutils literal"><span class="pre">RequestHandler</span></tt> classes that handle your app functionality</li>
+</ul>
 </div>
 
 
@@ -68,8 +84,8 @@
   <p class="topless"><a href="quickstart.html"
                         title="previous chapter">Quickstart: Using Mojo for the first time</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="urls.html"
-                        title="next chapter">Routing pages with URL&#8217;s</a></p>
+  <p class="topless"><a href="views.html"
+                        title="next chapter">Mojo Views</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/docs/apps.txt"
@@ -102,7 +118,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="urls.html" title="Routing pages with URL’s"
+          <a href="views.html" title="Mojo Views"
              >next</a> |</li>
         <li class="right" >
           <a href="quickstart.html" title="Quickstart: Using Mojo for the first time"

@@ -141,4 +141,27 @@ To use the Asynchronous driver, make sure that you have changed it in your ``set
 To start using it in your code, all models make an ``_async`` version of all operations available, that can be used with
 traditional callback-style async handling or Tornado's ``gen`` module style (for more readable code)::
 
+    class myRequestHandler(MojoRequestHandler):
+        @gen.engine
+        @tornado.web.asynchronous
+        def get(self):
+            from bson.objectid import ObjectId
+            thisPost = yield gen.Task(BlogPost.find_one_async, {'_id':ObjectId('5059fb6b3d941cdc4487bdff')})
 
+            self.render('template.html', post=thisPost)
+
+If you want to use callback-style development::
+
+    class myRequestHandler(MojoRequestHandler):
+
+        def callback(value):
+            self.render('template.html', post=value)
+
+        @gen.engine
+        @tornado.web.asynchronous
+        def get(self):
+            from bson.objectid import ObjectId
+            yield gen.Task(BlogPost.find_one_async, {'_id':ObjectId('5059fb6b3d941cdc4487bdff')}, callback=self.callback)
+
+**NOTE:** The ORM and Models modules are still in very early stage development, please report any bugs to the developer on the
+source-control page on BitBucket.

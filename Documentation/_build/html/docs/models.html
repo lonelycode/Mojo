@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using the ORM and Models in your apps &mdash; Mojo 0.1 documentation</title>
+    <title>The Mojo ORM and Models &mdash; Mojo 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,7 +26,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
-    <link rel="next" title="Using the Mojo backends" href="backends.html" />
+    <link rel="next" title="Mojo and SocketIO" href="socketio.html" />
     <link rel="prev" title="Routing pages with URL’s" href="urls.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Using the Mojo backends"
+          <a href="socketio.html" title="Mojo and SocketIO"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="urls.html" title="Routing pages with URL’s"
@@ -54,8 +54,148 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="using-the-orm-and-models-in-your-apps">
-<h1>Using the ORM and Models in your apps<a class="headerlink" href="#using-the-orm-and-models-in-your-apps" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="the-mojo-orm-and-models">
+<h1>The Mojo ORM and Models<a class="headerlink" href="#the-mojo-orm-and-models" title="Permalink to this headline">¶</a></h1>
+<p>To make working with databases easier, and to ensure a consistent set of tools when saving and moving data, Mojo
+uses models to define validation and data structures, and then uses these to set up how data will look in the database.</p>
+<p>Currently, Mojo only supports MongoDB, but we are hoping to add support for Redis and CouchDB soon. We actively encourage
+contributors, so anyone feeling the urge to help us write a new backend for their favourite datastore can drop us a line
+in our Google Group.</p>
+<div class="section" id="what-are-models">
+<h2>What are Models?<a class="headerlink" href="#what-are-models" title="Permalink to this headline">¶</a></h2>
+<p>For anyone familiar with Django, Mojo Models will seem very similar, and take heavy influence from the framework. Models
+are a way for you to organise and structure your data as python objects so you can transparently use them (without a
+data store) in your application.</p>
+<p>Models are very simple - they are a defined class, with a series of fields that you can use to represent your data and the
+various validation methods you would like run against those fields before the object is written to the database.</p>
+</div>
+<div class="section" id="why-models">
+<h2>Why Models?<a class="headerlink" href="#why-models" title="Permalink to this headline">¶</a></h2>
+<p>Because our first database to support was MongoDB, it became apparent that what was really missing was a good way to
+enforce structure and a certain degree of validation on stored data. Being Schema-less, it becomes very easy to not
+validate stored input due to the extra burden of writing the validation code, as well as not manging schema evolutions
+as schemas change over the lifecycle of your project.</p>
+<p>Models make this process easiewr by pre-defining data types, relations and object properties prior to saving, while exposing
+all the benefits of having a neat python object to represent your data set without resporting to direct database access.</p>
+</div>
+<div class="section" id="do-i-have-to-use-models">
+<h2>Do I have to use Models?<a class="headerlink" href="#do-i-have-to-use-models" title="Permalink to this headline">¶</a></h2>
+<p>Not at all, you can completely ignore the ORM and model structure in your project and directly access your database using your
+favourite driver.</p>
+</div>
+</div>
+<div class="section" id="using-models">
+<h1>Using Models<a class="headerlink" href="#using-models" title="Permalink to this headline">¶</a></h1>
+<p>To implement a model for your app, simply define it in the <tt class="docutils literal"><span class="pre">models.py</span></tt> file in your app directory:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Mojo.ObjectMapper.ModelPrototype</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">Mojo.ObjectMapper.Fields</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="c">#This is a non-database class, not stored in the DB but embedded in the BlogPost class below</span>
+<span class="c">#the key difference is the lack of an _id field</span>
+<span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">tag_name</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+
+<span class="c">#a simple model to hold blog posts</span>
+<span class="k">class</span> <span class="nc">BlogPost</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">_id</span> <span class="o">=</span> <span class="n">ObjectIDField</span><span class="p">()</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">allow_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">slug</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">(</span><span class="n">allow_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">post_intro</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">post_body</span> <span class="o">=</span> <span class="n">StringField</span><span class="p">()</span>
+    <span class="n">date_published</span> <span class="o">=</span> <span class="n">DateTimeField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+    <span class="n">tags</span> <span class="o">=</span> <span class="n">ListField</span><span class="p">(</span><span class="n">of</span><span class="o">=</span><span class="n">Tag</span><span class="p">)</span>
+    <span class="n">visible</span> <span class="o">=</span> <span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above example we&#8217;ve defined two models, the first <tt class="docutils literal"><span class="pre">Tag</span></tt> model is a straightforward class that is <strong>not</strong> a database object
+the key distinction here is the lack of the <tt class="docutils literal"><span class="pre">_id</span></tt> field (this is only relevant to the MongoDB backend as it requires an ID to be
+explicitly defined).</p>
+<p>The second model <tt class="docutils literal"><span class="pre">BlogPost</span></tt> is the real model, and lists a series of fields to represent data types, fields can be anything, so
+long as they subclass the <tt class="docutils literal"><span class="pre">Mojo.ObjectMapper.FieldPrototype.Field</span></tt> object.</p>
+<p>You can access the above model quite easily in your code:</p>
+<div class="highlight-python"><pre>new_minimal_post = BlogPost({
+    'title':u'a new post',
+    'slug' : 'newpost'
+})
+
+#access some properties
+print new_minimal_post.title
+&gt; a new post
+
+#save it (assuming synchronous DB backend):
+thispost = new_minimal_post.save()
+
+print thispost._id
+&gt; 50571e5f3d941cdc4487bdf1</pre>
+</div>
+<p>Models can be assigned data in dictionary format as part of their initialisation, or empty and then using dot-notation
+for each of their properties. So, in the example above, the following would work just as well:</p>
+<div class="highlight-python"><pre>new_minimal_post = BlogPost()
+new_minimal_post.title = u'a new post'
+new_minimal_post.slug = 'newpost'
+
+#access some properties
+print new_minimal_post.title
+&gt; a new post
+
+#save it (assuming synchronous DB backend):
+thispost = new_minimal_post.save()
+
+print thispost._id
+&gt; 50571e5f3d941cdc4487bdf1</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">Model</span></tt> objects are dictionaries, so if you print out or access them in any way, they should behave in the same way as a
+stamdard python <tt class="docutils literal"><span class="pre">dict</span></tt> object.</p>
+<p>Saving is very straightforward in mojo, and as can be seen from the example above, can easily be accomplished with the <tt class="docutils literal"><span class="pre">save()</span></tt>
+instance method.</p>
+<p>The main read/write operations of a model are as follows:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">save()</span></tt>: Called on an instance of the model, this will attempt to save the data to the database, if the object has an initialised <tt class="docutils literal"><span class="pre">_id</span></tt> value then it will be updated, otherwise it will perform an insert</li>
+<li><tt class="docutils literal"><span class="pre">delete()</span></tt>: Called on an instance of the model, thjis will delete it from the database</li>
+<li><tt class="docutils literal"><span class="pre">find()</span></tt>: Called on the Model object (class method), will use the criteria passed to find to return a list of instantiated model instances</li>
+<li><tt class="docutils literal"><span class="pre">find_one()</span></tt>: Called on the model object (class method), will use the criteria passed to find a single model object</li>
+<li><tt class="docutils literal"><span class="pre">delete_bulk([list])</span></tt>: Pass a list of objects ot this function for a bulk delete operation</li>
+</ul>
+<p>Both the <tt class="docutils literal"><span class="pre">find()</span></tt> and <tt class="docutils literal"><span class="pre">find_one()</span></tt> operations take MongoDB style <tt class="docutils literal"><span class="pre">dict</span></tt> objects as request parameters and follow the pymongo style of queries.</p>
+<p>One of the most appealing aspects of Tornado is it&#8217;s ability to work asynchronously, and Mojo takes that to heart, ensuring taht you can just as well
+use the asynchronous style of development with the ORM and Models.</p>
+<p>To use the Asynchronous driver, make sure that you have changed it in your <tt class="docutils literal"><span class="pre">settings.py</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DATABASE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;backend&#39;</span><span class="p">:</span> <span class="s">&#39;Mojo.Backends.AsyncmongoBackend.asyncmongo_backend&#39;</span><span class="p">,</span>
+    <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;YOUR_DB_NAME&#39;</span><span class="p">,</span>
+    <span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span>
+    <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27017</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>To start using it in your code, all models make an <tt class="docutils literal"><span class="pre">_async</span></tt> version of all operations available, that can be used with
+traditional callback-style async handling or Tornado&#8217;s <tt class="docutils literal"><span class="pre">gen</span></tt> module style (for more readable code):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">myRequestHandler</span><span class="p">(</span><span class="n">MojoRequestHandler</span><span class="p">):</span>
+    <span class="nd">@gen.engine</span>
+    <span class="nd">@tornado.web.asynchronous</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">bson.objectid</span> <span class="kn">import</span> <span class="n">ObjectId</span>
+        <span class="n">thisPost</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">BlogPost</span><span class="o">.</span><span class="n">find_one_async</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="n">ObjectId</span><span class="p">(</span><span class="s">&#39;5059fb6b3d941cdc4487bdff&#39;</span><span class="p">)})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&#39;template.html&#39;</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="n">thisPost</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to use callback-style development:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">myRequestHandler</span><span class="p">(</span><span class="n">MojoRequestHandler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&#39;template.html&#39;</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@gen.engine</span>
+    <span class="nd">@tornado.web.asynchronous</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">bson.objectid</span> <span class="kn">import</span> <span class="n">ObjectId</span>
+        <span class="k">yield</span> <span class="n">gen</span><span class="o">.</span><span class="n">Task</span><span class="p">(</span><span class="n">BlogPost</span><span class="o">.</span><span class="n">find_one_async</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;_id&#39;</span><span class="p">:</span><span class="n">ObjectId</span><span class="p">(</span><span class="s">&#39;5059fb6b3d941cdc4487bdff&#39;</span><span class="p">)},</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>NOTE:</strong> The ORM and Models modules are still in very early stage development, please report any bugs to the developer on the
+source-control page on BitBucket.</p>
 </div>
 
 
@@ -64,12 +204,23 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Mojo ORM and Models</a><ul>
+<li><a class="reference internal" href="#what-are-models">What are Models?</a></li>
+<li><a class="reference internal" href="#why-models">Why Models?</a></li>
+<li><a class="reference internal" href="#do-i-have-to-use-models">Do I have to use Models?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-models">Using Models</a></li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="urls.html"
                         title="previous chapter">Routing pages with URL&#8217;s</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="backends.html"
-                        title="next chapter">Using the Mojo backends</a></p>
+  <p class="topless"><a href="socketio.html"
+                        title="next chapter">Mojo and SocketIO</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/docs/models.txt"
@@ -102,7 +253,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Using the Mojo backends"
+          <a href="socketio.html" title="Mojo and SocketIO"
              >next</a> |</li>
         <li class="right" >
           <a href="urls.html" title="Routing pages with URL’s"

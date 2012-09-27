@@ -113,6 +113,8 @@ class SessionMixin_Sync(RequestHandler):
         thisSessionObject = Session.find_one({'session_key':self.session.session_id})
         if thisSessionObject is not None:
             self.session.session_model = thisSessionObject
+        else:
+            thisSessionObject = Session()
 
         return thisSessionObject
 

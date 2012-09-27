@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Real Mojo: SocketIO &mdash; Mojo 0.1 documentation</title>
+    <title>Mojo and SocketIO &mdash; Mojo 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
-    <link rel="next" title="Using Mojo’s Auth module" href="authentication.html" />
-    <link rel="prev" title="Using the Mojo backends" href="backends.html" /> 
+    <link rel="next" title="Using Mojo’s Auth and Session Mixins" href="authentication.html" />
+    <link rel="prev" title="The Mojo ORM and Models" href="models.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="authentication.html" title="Using Mojo’s Auth module"
+          <a href="authentication.html" title="Using Mojo’s Auth and Session Mixins"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Using the Mojo backends"
+          <a href="models.html" title="The Mojo ORM and Models"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -54,8 +54,67 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="real-mojo-socketio">
-<h1>Real Mojo: SocketIO<a class="headerlink" href="#real-mojo-socketio" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mojo-and-socketio">
+<h1>Mojo and SocketIO<a class="headerlink" href="#mojo-and-socketio" title="Permalink to this headline">¶</a></h1>
+<p>One of the strengths of Tornado is it&#8217;s ability to handle asynchronous requests and support for websockets. Top make Mojo
+more of a responsive framework, we&#8217;ve decided to bundle <tt class="docutils literal"><span class="pre">TornadIO2</span></tt> functionality as part of the overall package.</p>
+<p>For those that do not know what <tt class="docutils literal"><span class="pre">TornadIO2</span></tt> is, it is a <tt class="docutils literal"><span class="pre">SocketIO</span></tt> server implementation written in Python for Tornado, and
+makes it transparent to implement SocketIO clients into your app.</p>
+<p>By default, Mojo will start a <tt class="docutils literal"><span class="pre">TornadIO</span></tt> server for you that multiplexes a channel connection for each of the apps in your
+project.</p>
+<p>So if you have 2 apps: <tt class="docutils literal"><span class="pre">App1</span></tt> and <tt class="docutils literal"><span class="pre">App2</span></tt>, then you will be able to speak to either of these apps via SocketIO on the
+client by connecting to the <tt class="docutils literal"><span class="pre">/App1Socket</span></tt> or <tt class="docutils literal"><span class="pre">/App2Socket</span></tt> channels in your client side configuration.</p>
+<p>To configure what commands the server should intitiate on connection, send event or receive event, simply edit the <tt class="docutils literal"><span class="pre">socket_handlers.py</span></tt>
+file in your app folder:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Mojo.SocketHandlers.BaseSocketHandler</span> <span class="kn">import</span> <span class="n">MojoSocketHandler</span><span class="p">,</span> <span class="n">CURRENT_SESSIONS</span><span class="p">,</span> <span class="n">LOGGED_IN_SESSIONS</span>
+
+<span class="c">#Setup your socket connections here</span>
+<span class="k">class</span> <span class="nc">SocketConnectionHandler</span><span class="p">(</span><span class="n">MojoSocketHandler</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="c">#Do something cool when a message arrives</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<p>To make the most of <tt class="docutils literal"><span class="pre">TornadIO2</span></tt> and <tt class="docutils literal"><span class="pre">SocketIO</span></tt> we&#8217;d recommend you read the documentation for both as their inner workings fall outside
+of the remit of the Mojo documentation.</p>
+<div class="section" id="helpful-tracking">
+<h2>Helpful Tracking<a class="headerlink" href="#helpful-tracking" title="Permalink to this headline">¶</a></h2>
+<p>Mojo does some handy tracking for you if you use the <tt class="docutils literal"><span class="pre">MojoSocketHandler</span></tt> to manage your socket connections. Mojo will
+automatically register all connections in two variables that enable you to communicate with users directly from the start,
+these variables are <tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt> and <tt class="docutils literal"><span class="pre">LOGGED_IN_SESSIONS</span></tt></p>
+<div class="section" id="current-sessions">
+<h3><tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt><a class="headerlink" href="#current-sessions" title="Permalink to this headline">¶</a></h3>
+<p>This is a dictionary object that will track each connection by their Session ID. The session ID is a secure Tornado cookie
+that is called <tt class="docutils literal"><span class="pre">session_id</span></tt>, if you are using the <tt class="docutils literal"><span class="pre">MojoSessionMixin</span></tt> module, this will be set for you, however if you
+want to roll your own session management, you can just set this cookie and the user will be tracked by the ID in the <tt class="docutils literal"><span class="pre">SocketHandler</span></tt>.</p>
+<p>This will enable you to do something like:</p>
+<div class="highlight-python"><pre>from Mojo.RequestHandlers.MojoHandler import MojoRequestHandler
+from Mojo.SocketHandlers.BaseSocketHandler import CURRENT_SESSIONS
+import json
+
+    class HelloWorldHandler(MojoRequestHandler):
+        def get(self, *args, **kwargs):
+
+            jsonObj = json.dumps({'data':'%s has joined the chat' % (self.session_id)})
+
+            for session in CURRENT_SESSIONS:
+                session.emit('joinedStatus', jsonObj)
+
+            self.render('hello.html')</pre>
+</div>
+<p>Although the above code is not functional, the principle is valid - in this example, you could use the CURRENT_SESSIONS object
+to broadcast to all active users that a new user has joined the conversation.</p>
+</div>
+<div class="section" id="logged-in-sessions">
+<h3><tt class="docutils literal"><span class="pre">LOGGED_IN_SESSIONS</span></tt><a class="headerlink" href="#logged-in-sessions" title="Permalink to this headline">¶</a></h3>
+<p>If you are using the AuthMixin from Mojo, then it will set an encrypted cookie of the name <tt class="docutils literal"><span class="pre">logged_in</span></tt> with the user ID
+of the current user. Naturally, you can set this yourself to whatever identifier you like if you decide not use the mixins.</p>
+<p>Any session that is identified as Logged in will be added to the <tt class="docutils literal"><span class="pre">LOGGED_IN_SESSIONS</span></tt> dictionary, and will enable you to
+interact with users. In a similar vein to the <tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt> object, you would now be able to send specific messages only
+to logged in members of your app.</p>
+</div>
+</div>
 </div>
 
 
@@ -64,12 +123,24 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mojo and SocketIO</a><ul>
+<li><a class="reference internal" href="#helpful-tracking">Helpful Tracking</a><ul>
+<li><a class="reference internal" href="#current-sessions"><tt class="docutils literal"><span class="pre">CURRENT_SESSIONS</span></tt></a></li>
+<li><a class="reference internal" href="#logged-in-sessions"><tt class="docutils literal"><span class="pre">LOGGED_IN_SESSIONS</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="backends.html"
-                        title="previous chapter">Using the Mojo backends</a></p>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">The Mojo ORM and Models</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="authentication.html"
-                        title="next chapter">Using Mojo&#8217;s Auth module</a></p>
+                        title="next chapter">Using Mojo&#8217;s Auth and Session Mixins</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/docs/socketio.txt"
@@ -102,10 +173,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="authentication.html" title="Using Mojo’s Auth module"
+          <a href="authentication.html" title="Using Mojo’s Auth and Session Mixins"
              >next</a> |</li>
         <li class="right" >
-          <a href="backends.html" title="Using the Mojo backends"
+          <a href="models.html" title="The Mojo ORM and Models"
              >previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>

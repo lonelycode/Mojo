@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Using Mojo’s Auth module &mdash; Mojo 0.1 documentation</title>
+    <title>Using Mojo’s Auth and Session Mixins &mdash; Mojo 0.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,7 +26,8 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Mojo 0.1 documentation" href="../index.html" />
-    <link rel="prev" title="Real Mojo: SocketIO" href="socketio.html" /> 
+    <link rel="next" title="Mojo.Auth" href="api/Auth.html" />
+    <link rel="prev" title="Mojo and SocketIO" href="socketio.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="socketio.html" title="Real Mojo: SocketIO"
+          <a href="api/Auth.html" title="Mojo.Auth"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="socketio.html" title="Mojo and SocketIO"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -50,8 +54,90 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="using-mojo-s-auth-module">
-<h1>Using Mojo&#8217;s Auth module<a class="headerlink" href="#using-mojo-s-auth-module" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="using-mojo-s-auth-and-session-mixins">
+<h1>Using Mojo&#8217;s Auth and Session Mixins<a class="headerlink" href="#using-mojo-s-auth-and-session-mixins" title="Permalink to this headline">¶</a></h1>
+<p>To make Tornado a bit easier to use and integrate with your application, Mojo provides a sesison management mixin that
+adds database-backed sessions to your requests.</p>
+<p>The Session Mixin assumes that a database backend and ORM is present, which is why it comes in both sync and async flavors.
+The AuthMixin does not assume that a database is present and solely uses the set_cookie functionality of Tornado to make
+the get_current_user functionality work.</p>
+<div class="section" id="authmixin">
+<h2>AuthMixin<a class="headerlink" href="#authmixin" title="Permalink to this headline">¶</a></h2>
+<p>The AuthMixin basically overrides get_current_user() in the MojoRequestHandler and adds a SessionManager object to the
+attributes of the RequestHandler. Using the SessionManager, it is possible to login/logout the user:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">thisUser</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">is_authenticated</span><span class="p">:</span>
+        <span class="n">SessionManager</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="o">.</span><span class="n">_login</span><span class="p">(</span><span class="n">thisUser</span><span class="p">)</span> <span class="c">#Will make the relevant changes to the cookies.</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>Using it in a request might look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">tornado.web</span>
+<span class="kn">from</span> <span class="nn">Mojo.RequestHandlers.MojoHandler</span> <span class="kn">import</span> <span class="n">MojoRequestHandler</span>
+<span class="kn">from</span> <span class="nn">Mojo.Auth.Mixins.MojoAuthMixin</span> <span class="kn">import</span> <span class="n">MojoAuthMixin</span>
+<span class="kn">from</span> <span class="nn">Mojo.Auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">Mojo.Auth.Helpers</span> <span class="kn">import</span> <span class="n">login_assistant</span>
+
+<span class="c">#To implement the mixin, simply subclass it alongside the regular MojoRequestHandler and the authentication</span>
+<span class="c">#funcitonality will be come available.</span>
+
+<span class="k">class</span> <span class="nc">loginHandler</span><span class="p">(</span><span class="n">MojoRequestHandler</span><span class="p">,</span> <span class="n">MojoAuthMixin</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Override the get function to render the page, check current_user to see if we&#39;re already logged in</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_user</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;ALREADY LOGGED IN&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c">#Get the username and password from the request</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s">&#39;username&#39;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_argument</span><span class="p">(</span><span class="s">&#39;next&#39;</span><span class="p">,</span> <span class="s">&#39;/admin/&#39;</span><span class="p">)</span>
+
+        <span class="c">#Get the user from the database</span>
+        <span class="n">thisUser</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s">&#39;username&#39;</span><span class="p">:</span><span class="n">username</span><span class="p">})</span>
+
+        <span class="c">#Log the user in using the login assistant</span>
+        <span class="k">if</span> <span class="n">login_assistant</span><span class="p">(</span><span class="n">thisUser</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">&#39;login.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s">&#39;Login failed&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-sessionmixin">
+<h2>The SessionMixin<a class="headerlink" href="#the-sessionmixin" title="Permalink to this headline">¶</a></h2>
+<p>The SessionMixin comes in two flavours: Syncronous and Asyncronous, depending on what backend is being used in Mojo.
+To implement the SessionMixin, simply add it to the inheritance list as part of your RequestManager:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Mojo.Auth.Mixins.SessionMixins</span> <span class="kn">import</span> <span class="n">SessionMixin_Sync</span>
+<span class="k">class</span> <span class="nc">loginHandler</span><span class="p">(</span><span class="n">MojoRequestHandler</span><span class="p">,</span> <span class="n">SessionMixin_Sync</span><span class="p">):</span>
+
+            <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+</pre></div>
+</div>
+<p>The SessionMixin exposes some basic functionality that will let you get and set session data as part of your site and save
+it to the database.</p>
+<p>All session data is stored in the SessionModel as a Base64 encoded string that is a <tt class="docutils literal"><span class="pre">dict</span></tt>. To get and set session
+values is quite straightforward:</p>
+<div class="highlight-python"><pre>from Mojo.Auth.Mixins.SessionMixins import SessionMixin_Sync
+    class loginHandler(MojoRequestHandler, SessionMixin_Sync):
+
+            def get(self):
+                self.set_session_key('keyname', 'value')
+
+                value = self.get_session_key('keyname')
+
+                self.render('template.html', session_key_value = value)</pre>
+</div>
+</div>
 </div>
 
 
@@ -60,9 +146,21 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using Mojo&#8217;s Auth and Session Mixins</a><ul>
+<li><a class="reference internal" href="#authmixin">AuthMixin</a></li>
+<li><a class="reference internal" href="#the-sessionmixin">The SessionMixin</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="socketio.html"
-                        title="previous chapter">Real Mojo: SocketIO</a></p>
+                        title="previous chapter">Mojo and SocketIO</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api/Auth.html"
+                        title="next chapter">Mojo.Auth</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/docs/authentication.txt"
@@ -95,7 +193,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="socketio.html" title="Real Mojo: SocketIO"
+          <a href="api/Auth.html" title="Mojo.Auth"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="socketio.html" title="Mojo and SocketIO"
              >previous</a> |</li>
         <li><a href="../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
       </ul>

@@ -35,7 +35,6 @@ Contents:
     docs/views.rst
     docs/urls.rst
     docs/models.rst
-    docs/backends.rst
     docs/socketio.rst
     docs/authentication.rst
 

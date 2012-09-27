@@ -36,6 +36,9 @@ class MojoSocketHandler(SocketConnection):
         if 'session_id' in request.cookies:
             self.session_id = decode_signed_value(COOKIE_SECRET, 'session_id', unicode(request.get_cookie('session_id').value))
 
+            global CURRENT_SESSIONS
+            CURRENT_SESSIONS[self.session_id] = self
+
         if 'logged_in' in request.cookies:
             val = decode_signed_value(COOKIE_SECRET, 'logged_in', unicode(request.get_cookie('logged_in').value))
             if val != '':
@@ -45,8 +48,7 @@ class MojoSocketHandler(SocketConnection):
                 global LOGGED_IN_SESSIONS
                 LOGGED_IN_SESSIONS[self.logged_in] = self
 
-            global CURRENT_SESSIONS
-            CURRENT_SESSIONS[self.session_id] = self
+
 
     def on_close(self):
         global CURRENT_SESSIONS
