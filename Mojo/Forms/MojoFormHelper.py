@@ -133,7 +133,7 @@ def model_as_form(model, initObj=None, ignore=[], override={}):
 
     - ``initObj`` - If you want to inittialise the form with data, pass it an instance of the model in question and it will do it's best to instantiate it
     - ``ignore`` - If you want to exclude a list of fields from the automated conversion you can specify them as a list of strings corresponding to the name of the field in your model
-    -- ``override`` - To specify a custom wtForm field type, pass these as a dictionary of ``{"field name":FieldType,}``*
+    - ``override`` - To specify a custom wtForm field type, pass these as a dictionary of ``{"field name":FieldType,}``
 
     *note*: The override function takes either classes or instantiated objects, so if you want to pass through custom validators
      as part of the override, simply specify them in the override as if you would in a standard Form definition.

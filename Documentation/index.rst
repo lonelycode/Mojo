@@ -8,7 +8,7 @@ Mojo - a framework for Tornado
 
 Mojo is a framework that makes it easy and quick to build Tornado projects that scale.
 
-Some key features of Mojo:
+**Some key features of Mojo:**
 
 - A lightweight and flexible ORM that makes developing easy
 - ORM is based off a 'backend' system, enabling you to write your own backend and extend the ORM to other databases without altering your code
@@ -47,6 +47,7 @@ The Mojo API:
     docs/api/Auth.rst
     docs/api/Backends.rst
     docs/api/ObjectMapper.rst
+    docs/api/Forms.rst
     docs/api/RequestHandlers.rst
     docs/api/SocketHandlers.rst
 

@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Mojo Form Helpers &mdash; Mojo 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Mojo 0.1 documentation" href="../../index.html" />
+    <link rel="next" title="Mojo.RequestHandlers" href="RequestHandlers.html" />
+    <link rel="prev" title="Mojo.ObjectMapper" href="ObjectMapper.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="RequestHandlers.html" title="Mojo.RequestHandlers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ObjectMapper.html" title="Mojo.ObjectMapper"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="mojo-form-helpers">
+<h1>Mojo Form Helpers<a class="headerlink" href="#mojo-form-helpers" title="Permalink to this headline">¶</a></h1>
+<p>Mojo offers convenience functions to make handling forms with the database easier. At it&#8217;s core these functions are wrappers
+arounf basic wtForms functionality to make Form management easier.</p>
+<span class="target" id="module-Mojo.Forms.MojoFormHelper"></span><dl class="class">
+<dt id="Mojo.Forms.MojoFormHelper.Form">
+<em class="property">class </em><tt class="descclassname">Mojo.Forms.MojoFormHelper.</tt><tt class="descname">Form</tt><big>(</big><em>formdata=None</em>, <em>obj=None</em>, <em>prefix=''</em>, <em>locale_code='en_US'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#Mojo.Forms.MojoFormHelper.Form" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper around the standard <tt class="docutils literal"><span class="pre">wtForms</span></tt> <tt class="docutils literal"><span class="pre">Form</span></tt> object that integrates with tornado. Modified slightly for compatibility
+with Mojo models - you can pre-populate a form and populate a model using this Form class instead of the standard
+wtForms Form.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SigninForm</span><span class="p">(</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">EmailField</span><span class="p">(</span><span class="s">&#39;email&#39;</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">PasswordField</span><span class="p">(</span><span class="s">&#39;password&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">SigninHandler</span><span class="p">(</span><span class="n">RequestHandler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">SigninForm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">arguments</span><span class="p">,</span> <span class="n">locale_code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="Mojo.Forms.MojoFormHelper.Form.populate_from_model">
+<em class="property">classmethod </em><tt class="descname">populate_from_model</tt><big>(</big><em>klass</em>, <em>model</em>, <em>ignore=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#Mojo.Forms.MojoFormHelper.Form.populate_from_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Populates a form from a model, if you want to ignore some fields, use the <tt class="docutils literal"><span class="pre">ignore</span></tt> list (of strings)
+to set which fields not to be iterated over.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Mojo.Forms.MojoFormHelper.Form.populate_model_from_data">
+<tt class="descname">populate_model_from_data</tt><big>(</big><em>modelObj</em>, <em>ignore=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#Mojo.Forms.MojoFormHelper.Form.populate_model_from_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will populate a model from the data provided by a form. Use the <tt class="docutils literal"><span class="pre">ignore</span></tt> list (must all be strings) to
+ignore data keys passed back by your form.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Mojo.Forms.MojoFormHelper.model_as_form">
+<tt class="descclassname">Mojo.Forms.MojoFormHelper.</tt><tt class="descname">model_as_form</tt><big>(</big><em>model</em>, <em>initObj=None</em>, <em>ignore=</em><span class="optional">[</span><span class="optional">]</span>, <em>override={}</em><big>)</big><a class="headerlink" href="#Mojo.Forms.MojoFormHelper.model_as_form" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will take a model (non instantiated) object and produce a <tt class="docutils literal"><span class="pre">WTForm</span></tt> Form instance, this function only works one-way.</p>
+<p><tt class="docutils literal"><span class="pre">model_as_form</span></tt> can take three parameters:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">initObj</span></tt> - If you want to inittialise the form with data, pass it an instance of the model in question and it will do it&#8217;s best to instantiate it</li>
+<li><tt class="docutils literal"><span class="pre">ignore</span></tt> - If you want to exclude a list of fields from the automated conversion you can specify them as a list of strings corresponding to the name of the field in your model</li>
+<li><tt class="docutils literal"><span class="pre">override</span></tt> - To specify a custom wtForm field type, pass these as a dictionary of <tt class="docutils literal"><span class="pre">{&quot;field</span> <span class="pre">name&quot;:FieldType,}</span></tt></li>
+</ul>
+<dl class="docutils">
+<dt><em>note</em>: The override function takes either classes or instantiated objects, so if you want to pass through custom validators</dt>
+<dd><p class="first">as part of the override, simply specify them in the override as if you would in a standard Form definition.</p>
+<p><strong>Usage:</strong></p>
+<div class="highlight-python"><pre>from Mojo.Forms.MojoFormHelper import model_as_form
+
+# Let's get some data from our imaginary blog app
+posts = yield gen.Task(BlogPost.find_async, {'published':True}, sort=[('date_published',1)])
+a_post = posts[0]
+
+# Define a custom override set, the first is a base class,
+# the second is an instance with my custom validators:
+
+overrides = {'post_body': TextAreaField,
+             'post_intro': TextAreaField('Your intro text', [validators.required(),
+                                                             validators.length(max=10)]}
+
+# Create the form - we will ignore tags and
+# comments (these are Lists, and not implemented),
+# and override with our custom fields (StringFields are by
+# default TextFields, but we want TextAreas):
+
+thisForm = model_as_form(BlogPost, initObj=a_post, ignore=['tags', 'comments'], override=overrides)
+
+# ...Now do something with the form</pre>
+</div>
+<p>The system will automatically transform required model fields to required Form fields, no other validation checks are
+passed through yet.</p>
+<p class="last">For the &#8216;friendly name&#8217; o your form field, Mojo will use the <tt class="docutils literal"><span class="pre">friendly</span></tt> Mojo Model Form parameter, if none is present,
+Mojo will use the name of the Modle Field.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ObjectMapper.html"
+                        title="previous chapter">Mojo.ObjectMapper</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="RequestHandlers.html"
+                        title="next chapter">Mojo.RequestHandlers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/docs/api/Forms.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="RequestHandlers.html" title="Mojo.RequestHandlers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ObjectMapper.html" title="Mojo.ObjectMapper"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Mojo 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Martin Buhr.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
