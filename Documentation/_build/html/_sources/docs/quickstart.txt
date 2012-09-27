@@ -67,9 +67,9 @@ A quick run down of what each of these files and folders are:
 To create your first app, you simply need to invok ethe mojo_manager application,
 this will create your project folder as follows::
 
-mojo_manager.py -p MyNewProject
-cd MyNewProject
-mojo_manager.py -a HelloWorldApp
+    > mojo_manager.py -p MyNewProject
+    > cd MyNewProject
+    > mojo_manager.py -a HelloWorldApp
 
 That's it, all the files you need to get started should be created and in nbamed appropriately.
 
