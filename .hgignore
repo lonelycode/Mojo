@@ -5,3 +5,4 @@ venv
 *.pyc
 dist
 SampleMojoProject
+Mojo/todo\.txt
