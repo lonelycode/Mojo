@@ -6,7 +6,7 @@ This is a quick-start tutorial that will get you set up and running with Mojo fo
 Installation
 ------------
 
-1. Download the Mojo distribution
+1. Download the Mojo distribution: https://raw.github.com/lonelycode/Mojo/master/dist/Mojo-0.1.tar.gz
 2. Decompress the zip file
 3. Make sure you have installed the required support packages: ``Tornado``, ``TornadIO2``, ``bcrypt`` and ``wtforms``
 4. From the command line in the new folder run ``python setup.py install``
