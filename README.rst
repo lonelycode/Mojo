@@ -17,7 +17,7 @@ Mojo is a framework that makes it easy and quick to build Tornado projects that 
 The project is heavily influenced by Django, developers familiar with django will find some of the conventions in Mojo
 very familiar.
 
-*`Mojo documentation is available courtesy of ReadTheDocs <http://mojo.readthedocs.org/>`_, all documentation is written
+*Mojo documentation is available courtesy of ReadTheDocs: http://mojo.readthedocs.org/, all documentation is written
 in Sphinx.*
 
 Quickstart: Using Mojo for the first time
