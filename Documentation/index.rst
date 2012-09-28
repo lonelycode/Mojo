@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Mojo - a framework for Tornado
-==============================
+Mojo v0.1 - a framework for Tornado
+===================================
 
 Mojo is a framework that makes it easy and quick to build Tornado projects that scale.
 
