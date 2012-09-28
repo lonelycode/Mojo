@@ -3,6 +3,5 @@ syntax: glob
 venv
 \.idea
 *.pyc
-dist
 SampleMojoProject
 Mojo/todo\.txt
