@@ -114,8 +114,8 @@ class SessionMixin_Sync(RequestHandler):
         if thisSessionObject is not None:
             self.session.session_model = thisSessionObject
         else:
-            from Mojo.Auth.SessionManager import Setup_session
-            self.session.session_model = Setup_session(Session())
+            self.create_new_session()
+            thisSessionObject = Session.find_one({'session_key':self.session.session_id})
 
         return thisSessionObject
 
@@ -175,7 +175,7 @@ class SessionMixin_Async(RequestHandler):
             self._session = SessionManager(self)
 
     @gen.engine
-    def set_session_key(self, key, value):
+    def set_session_key(self, key, value, callback):
         """
         Sets a session key and saves it to the database (not a cookie - sessions are identified by a ``session_id`` in
         the secure cookie collection and for security purposes are encoded and stored in the database so as not to leak
@@ -197,10 +197,12 @@ class SessionMixin_Async(RequestHandler):
 
         """
         if self.session.session_model is None:
-            yield gen.Task(self.get_session_object)
+            sessionObj = yield gen.Task(self.get_session_object)
+
 
         self.session._set_session_key(key, value)
-        self.save_session_object()
+        yield gen.Task(self.save_session_object)
+        callback(self.session)
 
     @gen.engine
     def get_session_key(self, key, callback, default=None):
@@ -230,38 +232,46 @@ class SessionMixin_Async(RequestHandler):
         else:
             callback(default)
 
-    def create_new_session(self):
+    @gen.engine
+    def create_new_session(self, callback=None):
         """
         Wrapper around the SessionManagers _create_new_session() method, but will save the session to DB instead of
         having to manage it manually.
         """
 
-        new_session_model = self.session._create_new_session()
+        new_session_model = yield gen.Task(self.session._create_new_session)
         self.session.session_model = new_session_model
-        self.save_session_object()
+        nullval = yield gen.Task(self.save_session_object)
+        callback(nullval)
 
     @gen.engine
-    def save_session_object(self):
+    def save_session_object(self, callback=None):
         """
         Saves the session model to the database, in this case it's an asynchronous (non-blocking) operation. If there is no
         session to save, will create a new one (which is then saved automatically)
         """
         if self.session.session_model is not None:
-            yield gen.Task(self.session.session_model.save_async)
+            nullval = yield gen.Task(self.session.session_model.save_async)
+            callback(nullval)
         else:
-            self.create_new_session()
+            print 'CREATING AGAIN'
+            nullval = yield gen.Task(self.create_new_session)
+            callback(nullval)
 
     @gen.engine
     def get_session_object(self, callback):
         """
         Returns the whole session_model object and assigns it to itself.
         """
-        thisSessionObject = yield gen.Task(Session.find_one_async, {'session_key':self.session.session_id})
 
+        thisSessionObject = yield gen.Task(Session.find_one_async, {'session_key':self.session.session_id})
         if thisSessionObject is not None:
             self.session.session_model = thisSessionObject
         else:
-            self.create_new_session()
+            print 'NO SESSION!!'
+            thisObj = yield gen.Task(self.create_new_session)
+            thisSessionObject = yield gen.Task(Session.find_one_async, {'session_key':self.session.session_id})
+
 
         callback(thisSessionObject)
 

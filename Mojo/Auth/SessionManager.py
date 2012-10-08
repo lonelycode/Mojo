@@ -148,14 +148,14 @@ class SessionManager(object):
 
         return encoded_str
 
-    def _create_new_session(self):
+    def _create_new_session(self, callback):
         '''
         Creates and sets up a new ``session_model`` ready for the request.
         '''
         new_session = Setup_session(Session())
         self.session_model = new_session
         self.request_handler.set_secure_cookie('session_id', new_session.session_key)
-        return self.session_model
+        callback(self.session_model)
 
 def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
     '''
@@ -180,7 +180,11 @@ def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
     sessionObj.session_key = str(uuid.uuid4())
     expiry_date = datetime.datetime.now() +datetime.timedelta(days=expiry_days, hours=expiry_hours, minutes = expiry_minutes)
     sessionObj.session_expires = expiry_date
-    sessionObj.session_data = {}
+
+    session_json_str = json.dumps({})
+    encoded_str = base64.b64encode(session_json_str)
+
+    sessionObj.session_data = encoded_str
 
     return sessionObj
 
