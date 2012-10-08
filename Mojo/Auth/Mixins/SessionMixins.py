@@ -114,7 +114,8 @@ class SessionMixin_Sync(RequestHandler):
         if thisSessionObject is not None:
             self.session.session_model = thisSessionObject
         else:
-            thisSessionObject = Session()
+            from Mojo.Auth.SessionManager import Setup_session
+            self.session.session_model = Setup_session(Session())
 
         return thisSessionObject
 

@@ -75,7 +75,7 @@ The SessionMixin exposes some basic functionality that will let you get and set 
 it to the database.
 
 All session data is stored in the SessionModel as a Base64 encoded string that is a ``dict``. To get and set session
-values is quite straightforward::
+values is quite straightforward as the session will be auto-created as soon as you start using the object::
 
     from Mojo.Auth.Mixins.SessionMixins import SessionMixin_Sync
         class loginHandler(MojoRequestHandler, SessionMixin_Sync):

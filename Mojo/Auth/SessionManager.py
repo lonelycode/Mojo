@@ -87,7 +87,7 @@ class SessionManager(object):
         as the cookie expiry. Returns ``True`` or ``False``
         '''
         if self.session_model is not None:
-            if self.session_model.session_expires.get_value() > datetime.datetime.now():
+            if self.session_model.session_expires > datetime.datetime.now():
                 return True
             else:
                 return False
@@ -100,7 +100,7 @@ class SessionManager(object):
         function will go through a `check -> decode -> set` process and set the ``session_model`` attribute of the ``SesionManager``
         '''
         if self.session_model.session_data is not None:
-            session_data = self._decode_session(self.session_model.session_data.get_value())
+            session_data = self._decode_session(self.session_model.session_data)
             session_data[key] = value
         else:
             session_data = {key:value}
@@ -117,7 +117,7 @@ class SessionManager(object):
         if self._is_session_valid():
             session_data = {}
             if self.session_model is not None:
-                session_data = self._decode_session(self.session_model.session_data.get_value())
+                session_data = self._decode_session(self.session_model.session_data)
 
             if key in session_data:
                 return session_data[key]
@@ -154,7 +154,7 @@ class SessionManager(object):
         '''
         new_session = Setup_session(Session())
         self.session_model = new_session
-        self.request_handler.set_secure_cookie('session_id', new_session.session_key.get_value())
+        self.request_handler.set_secure_cookie('session_id', new_session.session_key)
         return self.session_model
 
 def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
