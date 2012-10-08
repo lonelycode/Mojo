@@ -1,5 +1,5 @@
-Mojo v0.1 - a framework for Tornado
-===================================
+Mojo v0.1.1 - a framework for Tornado
+=====================================
 
 Mojo is a framework that makes it easy and quick to build Tornado projects that scale.
 
