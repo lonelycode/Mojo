@@ -92,8 +92,7 @@ class SessionMixin_Sync(RequestHandler):
         Wrapper around the SessionManagers _create_new_session() method, but will save the session to DB instead of
         having to manage it manually.
         """
-        new_session_model = self.session._create_new_session()
-        self.session.session_model = new_session_model
+        self.session._create_new_session()
         self.save_session_object()
 
     def save_session_object(self):
@@ -103,6 +102,7 @@ class SessionMixin_Sync(RequestHandler):
         """
         if self.session.session_model is not None:
             self.session.session_model.save()
+
         else:
             self.create_new_session()
 

@@ -148,14 +148,16 @@ class SessionManager(object):
 
         return encoded_str
 
-    def _create_new_session(self, callback):
+    def _create_new_session(self, callback = None):
         '''
         Creates and sets up a new ``session_model`` ready for the request.
         '''
         new_session = Setup_session(Session())
         self.session_model = new_session
         self.request_handler.set_secure_cookie('session_id', new_session.session_key)
-        callback(self.session_model)
+        if callback:
+            callback(self.session_model)
+
 
 def Setup_session(sessionObj, expiry_days=30, expiry_hours=0, expiry_minutes=0):
     '''
