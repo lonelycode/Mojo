@@ -6,7 +6,7 @@ WTForms==1.0.2
 asyncmongo==1.2.1
 distribute==0.6.27
 docutils==0.9.1
-py-bcrypt==0.2
+py-bcrypt==0.4
 pymongo==2.2
 simplejson==2.6.1
 tornado==2.3
