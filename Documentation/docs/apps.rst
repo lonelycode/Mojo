@@ -16,7 +16,7 @@ This will create an app folder with certain key files:
 
 - ``models.py``: This is where you define your models which can be used with your database and forms
 - ``socket_handlers.py``: This is where you define your SocketIO behaviour, each app has it's own dedicated (multiplexed) channel under ``/[appname]Socket`` to separate out functionality
-- ``ui_modules.py``: The ui_modules you might or mihjgt not be using
+- ``ui_modules.py``: The ui_modules you might or might not be using
 - ``urls.py``: The URL mappings for your request handlers
 - ``views.py``: A list of your ``RequestHandler`` classes that handle your app functionality
 
